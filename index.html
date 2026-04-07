@@ -1533,13 +1533,6 @@
       transform: translateY(22px);
     }
 
-    /* Move boxes tinta 20px para baixo em mobile nas inter screens */
-    #inter1-box .interblock-steps,
-    #inter2-box .interblock-steps,
-    #inter3-box .interblock-steps {
-      margin-top: 20px;
-    }
-
     /* Carousel cards mobile */
     .interblock-steps { gap: 14px; align-items: center; }
     .interblock-step { width: fit-content; max-width: 100%; }
@@ -1594,7 +1587,13 @@
     box-sizing: border-box;
   }
 @media (max-width: 580px) {
-    .interblock-bg-box { padding: 48px 28px 40px 28px; height: 540px; top: calc(50% - 45px); }
+    .interblock-bg-box {
+      padding: 48px 28px 40px 28px;
+      height: 540px;
+      /* Empurra o box para baixo do header no Safari iOS */
+      top: calc(50% + 30px);
+      max-height: calc(100dvh - 110px);
+    }
     #inter1-box { height: 535px; }
     #inter2-box { height: 535px; }
     #inter3-box { height: 535px; }
