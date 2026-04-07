@@ -548,7 +548,7 @@
     transition: opacity 1.0s ease;
   }
   .multi-hint.sub-visible { opacity: 1; }
-  .multi-hint::before { content: '☑'; color: var(--wine); font-size: 13px; }
+  .multi-hint::before { content: '☑️'; color: var(--wine); font-size: 13px; }
 
   /* ── PHOTO UPLOAD ── */
   .photo-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-top: 6px; }
@@ -742,7 +742,7 @@
     transition: color 0.2s, transform 0.15s; padding: 8px 0;
     will-change: transform;
   }
-  .btn-back:hover { color: var(--ivory-dark); transform: scale(1.05); }
+  .btn-back:hover { color: var(--ink); transform: scale(1.05); }
   .btn-back::before { content: '←'; font-size: 15px; }
   /* Nas inter screens, btn-back fica fora do box, abaixo, cor marfim */
   .interblock-btn-back-wrap {
@@ -761,7 +761,7 @@
   }
   .interblock-btn-back-wrap.sub-visible { opacity: 1; }
   .screen.interblock .btn-back { color: var(--ivory); }
-  .screen.interblock .btn-back:hover { color: var(--ivory-dark); transform: scale(1.05); }
+  .screen.interblock .btn-back:hover { color: var(--ink); transform: scale(1.05); }
 
   .btn-next {
     background: var(--wine);
@@ -819,9 +819,9 @@
   }
 
   @media (max-width: 580px) {
-    #screen-0 .screen-h1 { font-size: 33px; max-width: 100%; margin-top: 5px; }
-    #screen-0 .screen-h1 .intro-highlight { font-size: 33px; }
-    #screen-0 .screen-h1 .intro-finale { font-size: 33px; }
+    #screen-0 .screen-h1 { font-size: 40px; max-width: 100%; margin-top: 5px; }
+    #screen-0 .screen-h1 .intro-highlight { font-size: 40px; }
+    #screen-0 .screen-h1 .intro-finale { font-size: 40px; }
     .sub1-desktop { display: none; }
     .sub1-mobile  { display: inline; }
   }
@@ -837,7 +837,7 @@
   }
   @media (max-width: 580px) {
     #screen-0 .intro-sub-1 { padding-top: 10px !important; margin-bottom: 3px !important; }
-    #screen-0 .intro-sub-2 { padding-top: 10px !important; margin-bottom: 20px !important; }
+    #screen-0 .intro-sub-2 { padding-top: 10px !important; margin-bottom: 20px !important; margin-top: -10px !important; }
     #screen-0 .intro-steps  { margin-bottom: 27px !important; }
   }
 
@@ -2071,6 +2071,16 @@
   #scanner-back-btn:hover { opacity: 1; transform: scale(1.05); }
   #scanner-back-btn::before { content: '←'; font-size: 15px; }
 
+  /* ── Pílula WhatsApp footer ── */
+  .footer-wa-pill {
+    transition: background 0.22s, box-shadow 0.22s, transform 0.15s !important;
+  }
+  .footer-wa-pill:hover {
+    background: var(--ivory-mid) !important;
+    box-shadow: 0 4px 14px rgba(24,16,14,0.12), inset 0 1px 0 rgba(255,255,255,0.30) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+  }
+
 </style>
 </head>
 <body>
@@ -3246,10 +3256,16 @@
     const boxId = (n === 'inter1') ? 'inter1-box' : (n === 'inter2') ? 'inter2-box' : 'inter3-box';
     const box   = document.getElementById(boxId);
 
-    // 1. Screen atual sai (exit-up) + névoa
+    // 1. Screen atual sai (exit-up) + névoa + footer desce
     if (cur) {
       cur.classList.remove('enter-up','enter-down','enter-fade','exit-up','exit-down','exit-fade');
       cur.classList.add('exit-up');
+    }
+    const _ftEl = document.getElementById('site-footer');
+    if (_ftEl) {
+      _ftEl.classList.add('footer-ready');
+      _ftEl.classList.remove('footer-hiding', 'footer-entering');
+      _ftEl.classList.add('footer-hiding');
     }
     window.mistInterMode = true;
     if (typeof window.goMist === 'function') window.goMist('up', n);
@@ -3338,6 +3354,15 @@
     // 3. Névoa salta para posição destino; próxima screen aparece enquanto overlay recolhe
     window.mistInterMode = false;
     if (typeof window.goMist === 'function') window.goMist('snap', n);
+
+    // Footer entra de baixo para cima junto com a próxima screen
+    const _ftEl2 = document.getElementById('site-footer');
+    if (_ftEl2) {
+      _ftEl2.classList.add('footer-ready');
+      _ftEl2.classList.remove('footer-hiding', 'footer-entering');
+      _ftEl2.classList.add('footer-entering');
+      setTimeout(() => _ftEl2.classList.remove('footer-entering'), 450);
+    }
 
     // Inicia o colapso e mostra a próxima screen simultaneamente
     _headerCollapse();
@@ -6347,7 +6372,7 @@
     .footer-bar {
       position: relative; z-index: 2;
       display: flex; align-items: center; justify-content: center;
-      padding: 0 32px; height: 44px;
+      padding: 0 32px;
       border-top: 1px solid rgba(247,242,234,0.55);
     }
     .footer-copy {
@@ -6363,6 +6388,54 @@
     @media (max-width: 580px) {
       .footer-bar { padding: 0 16px; }
       .footer-copy { font-size: 12px; }
+    }
+
+    /* ── Área acima da linha: segura o botão pílula ── */
+    .footer-wa-wrap {
+      position: relative; z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      margin-bottom: 15px;
+    }
+
+    /* ── Botão pílula WhatsApp ── */
+    .footer-wa-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--sans);
+      font-size: 12.6px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--ink-soft, #5c4a3a);
+      background: rgba(253,250,247,0.70);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.60);
+      padding: 6.3px 14.7px;
+      border-radius: 100px;
+      box-shadow: 0 2px 8px rgba(24,16,14,0.07), inset 0 1px 0 rgba(255,255,255,0.8);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.22s, box-shadow 0.22s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .footer-wa-pill:hover {
+      background: var(--ivory-dark);
+      box-shadow: 0 4px 14px rgba(24,16,14,0.12), inset 0 1px 0 rgba(255,255,255,0.30);
+      transform: translateY(-2px) scale(1.05);
+    }
+    .footer-wa-pill svg { flex-shrink: 0; }
+
+    /* footer-bar: apenas copyright, altura fixa restaurada */
+    .footer-bar {
+      flex-direction: row;
+      gap: 0;
+      height: 44px;
+      padding-top: 0;
+      padding-bottom: 0;
     }
   </style>
 
@@ -6385,7 +6458,15 @@
     <path id="footer-path-gloss" fill="rgba(255,255,255,0.13)" stroke="none"/>
   </svg>
 
-  <!-- Barra inferior -->
+  <!-- Pílula WhatsApp — acima da linha marfim -->
+  <div class="footer-wa-wrap">
+    <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer" class="footer-wa-pill">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 175.216 175.552" width="15" height="15"><defs><linearGradient id="wa-b" x1="85.915" x2="86.535" y1="32.567" y2="137.092" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#57d163"/><stop offset="1" stop-color="#23b33a"/></linearGradient><filter id="wa-a" width="1.115" height="1.114" x="-.057" y="-.057" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="3.531"/></filter></defs><path fill="#b3b3b3" d="m54.532 138.45 2.235 1.324c9.387 5.571 20.15 8.518 31.126 8.523h.023c33.707 0 61.139-27.426 61.153-61.135.006-16.335-6.349-31.696-17.895-43.251A60.75 60.75 0 0 0 87.94 25.983c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.312-6.179 22.558zm-40.811 23.544L24.16 123.88c-6.438-11.154-9.825-23.808-9.821-36.772.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954zm0 0" filter="url(#wa-a)"/><path fill="#fff" d="m12.966 161.238 10.439-38.114a73.42 73.42 0 0 1-9.821-36.772c.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954z"/><path fill="url(#wa-b)" d="M87.184 25.227c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.313-6.179 22.558 23.146-6.069 2.235 1.324c9.387 5.571 20.15 8.517 31.126 8.523h.023c33.707 0 61.14-27.426 61.153-61.135a60.75 60.75 0 0 0-17.895-43.251 60.75 60.75 0 0 0-43.235-17.928z"/><path fill="#fff" fill-rule="evenodd" d="M68.772 55.603c-1.378-3.061-2.828-3.123-4.137-3.176l-3.524-.043c-1.226 0-3.218.46-4.902 2.3s-6.435 6.287-6.435 15.332 6.588 17.785 7.506 19.013 12.718 20.381 31.405 27.75c15.529 6.124 18.689 4.906 22.061 4.6s10.877-4.447 12.408-8.74 1.532-7.971 1.073-8.74-1.685-1.226-3.525-2.146-10.877-5.367-12.562-5.981-2.91-.919-4.137.921-4.746 5.979-5.819 7.206-2.144 1.381-3.984.462-7.76-2.861-14.784-9.124c-5.465-4.873-9.154-10.891-10.228-12.73s-.114-2.835.808-3.751c.825-.824 1.838-2.147 2.759-3.22s1.224-1.84 1.836-3.065.307-2.301-.153-3.22-4.032-10.011-5.666-13.647"/></svg>
+      Tem dúvida? Fala com a gente
+    </a>
+  </div>
+
+  <!-- Barra inferior (linha marfim + copyright) -->
   <div class="footer-bar">
     <span class="footer-copy"><strong class="footer-copy-highlight">© 2026 derm.ia.</strong> Todos os direitos reservados.</span>
   </div>
@@ -6462,10 +6543,8 @@
     function onScreenChange(activeScreen) {
       var ft = document.getElementById('site-footer');
       if (!ft) return;
-      if (activeScreen && isInter(activeScreen.id)) {
-        ft.style.display = 'none';
-      } else {
-        ft.style.display = '';
+      // Footer permanece visível — cc-overlay (z-index:54) já o cobre nas inter screens
+      if (activeScreen && !isInter(activeScreen.id)) {
         // Aguarda a animação de entrada terminar antes de medir
         setTimeout(pushFooterToFold, 520);
       }
