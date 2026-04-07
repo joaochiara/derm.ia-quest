@@ -1817,7 +1817,7 @@
     #hud-tl, #hud-tr { top: 158px; }
     #hud-bl, #hud-br { display: block; bottom: 95px; }
     .scan-hud { font-size: 9px; }
-    #scanner-instruction { bottom: 305px; }
+    #scanner-instruction { bottom: 295px; }
     #scanner-top { padding-top: 82px; }
     #scanner-progress-wrap { bottom: 62px; }
   }
@@ -1851,12 +1851,12 @@
   #scanner-status-badge {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 6px 14px;
+    gap: 8px;
+    padding: 6.9px 16.1px;
     background: rgba(10,6,5,0.72);
     border: 1px solid rgba(247,242,234,0.40);
     border-radius: 100px;
-    font-size: 10px;
+    font-size: 11.5px;
     font-weight: 400;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -1864,7 +1864,7 @@
     backdrop-filter: blur(8px);
   }
   #scanner-status-dot {
-    width: 6px; height: 6px; border-radius: 50%;
+    width: 6.9px; height: 6.9px; border-radius: 50%;
     background: rgba(247,242,234,1);
     animation: statusBlink 1.4s ease-in-out infinite;
   }
@@ -1880,19 +1880,19 @@
   /* Topo: label + dots */
   #scanner-top {
     position: absolute;
-    top: 0; left: 0; right: 0;
-    padding: 102px 32px 20px;
+    top: -30px; left: 0; right: 0;
+    padding: 117px 37px 23px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     background: linear-gradient(180deg, rgba(0,0,0,0.70) 0%, transparent 100%);
     z-index: 6;
   }
 
   #scanner-step-label {
     font-family: var(--sans);
-    font-size: 11px;
+    font-size: 12.65px;
     font-weight: 400;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -1906,7 +1906,7 @@
   }
 
   .sdot {
-    width: 28px; height: 4px;
+    width: 32.2px; height: 4.6px;
     border-radius: 2px;
     background: rgba(255,255,255,0.15);
     border: none;
@@ -1917,7 +1917,7 @@
   }
   .sdot.active {
     background: rgba(247,242,234,1);
-    width: 40px;
+    width: 46px;
     box-shadow: 0 0 8px rgba(247,242,234,0.6);
   }
 
@@ -1990,11 +1990,11 @@
   /* Barra de progresso de captura */
   #scanner-progress-wrap {
     position: absolute;
-    bottom: 42px;
+    bottom: 72px;
     left: 50%;
     transform: translateX(-50%);
-    width: 200px;
-    height: 2px;
+    width: 230px;
+    height: 2.3px;
     background: rgba(247,242,234,0.12);
     border-radius: 2px;
     overflow: hidden;
