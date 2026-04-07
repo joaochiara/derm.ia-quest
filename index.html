@@ -826,7 +826,7 @@
   }
 
   @media (max-width: 580px) {
-    #screen-0 .screen-h1 { font-size: 40px; max-width: 100%; margin-top: 0px; transform: translateY(-5px); }
+    #screen-0 .screen-h1 { font-size: 40px; max-width: 100%; margin-top: 5px; transform: translateY(-5px); }
     #screen-0 .screen-h1 .intro-highlight { font-size: 40px; }
     #screen-0 .screen-h1 .intro-finale { font-size: 40px; }
     .sub1-desktop { display: none; }
@@ -1534,10 +1534,15 @@
       margin-top: -10px !important;
       margin-bottom: -10px !important;
     }
+    /* Box 2 e 3: 5px para cima */
+    #screen-0 #intro-box-2,
+    #screen-0 #intro-box-3 {
+      margin-top: -15px !important;
+    }
 
     /* Move botão para cima em mobile */
     #screen-0 #intro-btn {
-      transform: translateY(12px);
+      transform: translateY(2px);
     }
 
     /* Carousel cards mobile */
@@ -3316,6 +3321,7 @@
     current = n;
     updateProgress();
     window.scrollTo({ top: 0, behavior: 'instant' });
+    document.body.style.overflow = 'hidden';
 
     await _wait(60);
 
@@ -3365,6 +3371,7 @@
     // 1. Widget some
     await _widgetBox(box, 'widget-out', 400);
     if (box) box.style.display = 'none';
+    document.body.style.overflow = '';
     if (cur) cur.classList.remove('active');
 
     // 2. Prepara próxima screen
