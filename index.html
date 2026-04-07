@@ -3067,13 +3067,13 @@
     <span id="hud-depth">PROF: —</span>
   </div>
   <div class="scan-hud" id="hud-tr">
+    IA SCANNER ATIVA<br>
     <span id="hud-res">RES: —</span><br>
-    <span id="hud-conf">CONF: —%</span><br>
-    IA SCANNER ATIVA
+    <span id="hud-conf">CONF: —%</span>
   </div>
   <div class="scan-hud" id="hud-bl">
     <span id="hud-pores">POROS: —</span><br>
-    <span id="hud-hydra">HIDRAT: —</span><br>
+    <span id="hud-hydra">HIDRATAÇÃO: —</span><br>
     <span id="hud-oily">OLEOSIDADE: —</span>
   </div>
   <div class="scan-hud" id="hud-br">
@@ -5077,7 +5077,7 @@
         if (!faceDetected && !scanActive) return;
         const conf = faceDetected ? (78 + Math.floor(Math.random() * 18)) : 0;
         if (hudConf)  hudConf.textContent  = 'CONF: '    + (faceDetected ? conf + '%' : '—%');
-        if (hudDepth) hudDepth.textContent = 'DEPTH: '   + (faceDetected ? (8 + Math.random()*4).toFixed(1) + 'mm' : '—');
+        if (hudDepth) hudDepth.textContent = 'PROF: '    + (faceDetected ? (8 + Math.random()*4).toFixed(1) + 'mm' : '—');
         if (faceDetected && hudPtCount < 468) {
           hudPtCount  = Math.min(468, hudPtCount + Math.floor(Math.random() * 24));
           hudZoneCount = Math.min(7, Math.floor(hudPtCount / 68));
@@ -5087,7 +5087,7 @@
         if (hudAcc)   hudAcc.textContent   = 'PRECISÃO: '  + (faceDetected ? (conf - 3 + Math.floor(Math.random()*6)) + '%' : '—');
         if (faceDetected && Math.random() < 0.3) {
           if (hudPores) hudPores.textContent = 'POROS: '      + ['BAIXO','MÉDIO','ALTO'][Math.floor(Math.random()*3)];
-          if (hudHydra) hudHydra.textContent = 'HIDRAT: '     + (Math.floor(Math.random()*40+45)) + '%';
+          if (hudHydra) hudHydra.textContent = 'HIDRATAÇÃO: '     + (Math.floor(Math.random()*40+45)) + '%';
           if (hudOily)  hudOily.textContent  = 'OLEOSIDADE: ' + ['BAIXA','MÉDIA','ALTA'][Math.floor(Math.random()*3)];
         }
       }, 280);
@@ -5098,12 +5098,12 @@
     function resetHud() {
       hudPtCount = 0; hudZoneCount = 0;
       if (hudConf)  hudConf.textContent  = 'CONF: —%';
-      if (hudDepth) hudDepth.textContent = 'DEPTH: —';
+      if (hudDepth) hudDepth.textContent = 'PROF: —';
       if (hudPts)   hudPts.textContent   = 'PONTOS: 0';
       if (hudZones) hudZones.textContent = 'ZONAS: 0/7';
       if (hudAcc)   hudAcc.textContent   = 'PRECISÃO: —';
       if (hudPores) hudPores.textContent = 'POROS: —';
-      if (hudHydra) hudHydra.textContent = 'HIDRAT: —';
+      if (hudHydra) hudHydra.textContent = 'HIDRATAÇÃO: —';
       if (hudOily)  hudOily.textContent  = 'OLEOSIDADE: —';
     }
 
