@@ -1406,6 +1406,17 @@
     pointer-events: none;
   }
   .routine-step:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(168,85,104,0.18), inset 0 1px 0 rgba(255,255,255,0.8); }
+  @media (min-width: 581px) {
+    .routine-step { flex-wrap: nowrap; align-items: center; }
+    .routine-step .rs-part1 {
+      display: none;
+    }
+    .routine-step .rs-part2 {
+      flex: 1;
+      width: auto; flex-basis: auto;
+      margin-top: 0;
+    }
+  }
   .dica-step {
     display: flex; align-items: center; gap: 12px;
     padding: 16px 18px;
@@ -1482,6 +1493,17 @@
     pointer-events: none;
   }
   .prod-rec:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(168,85,104,0.18), inset 0 1px 0 rgba(255,255,255,0.8); }
+  @media (min-width: 581px) {
+    .prod-rec { flex-wrap: nowrap; align-items: center; }
+    .prod-rec .pr-part1 {
+      flex: 1;
+      width: auto; flex-basis: auto;
+    }
+    .prod-rec .pr-part2 {
+      display: none;
+    }
+    .prod-rec .prod-fit { margin-left: 0; }
+  }
   @media (max-width: 580px) {
     .prod-rec {
       flex-wrap: wrap;
@@ -5147,7 +5169,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
           imgHtml +
           '<div class="rs-part1" style="position:relative;z-index:1;flex:1;">' + nomeLine + '</div>' +
           precoPilula +
-          '<div class="rs-part2" style="position:relative;z-index:1;width:100%;flex-basis:100%;">' + prodLine + brandLine + descLine + '</div>' +
+          '<div class="rs-part2" style="position:relative;z-index:1;width:100%;flex-basis:100%;">' + nomeLine + prodLine + brandLine + descLine + '</div>' +
         '</div>';
       }).join('');
     }
@@ -5183,6 +5205,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
           return '<div class="prod-rec">' +
             imgHtml +
             '<div class="pr-part1" style="position:relative;z-index:1;flex:1;">' +
+              '<div class="prod-name">' + nomeLimpo + '</div>' +
               '<div class="prod-brand">' + p.marca + '</div>' +
               '<div class="prod-price">' + preco + '</div>' +
             '</div>' +
