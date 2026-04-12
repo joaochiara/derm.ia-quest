@@ -1382,7 +1382,7 @@
       padding-right: 0;
       margin-top: 0;
     }
-    .routine-step .rs-step-name { padding-right: 0; }
+    .routine-step .rs-step-name { padding-right: 0; display: block; }
     .routine-step .rs-prod-name { padding-right: 0; }
     .routine-step .rs-prod-instr { padding-right: 0; }
   }
@@ -1408,15 +1408,13 @@
   .routine-step:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(168,85,104,0.18), inset 0 1px 0 rgba(255,255,255,0.8); }
   @media (min-width: 581px) {
     .routine-step { flex-wrap: nowrap; align-items: center; }
-    .routine-step .rs-part1 {
-      display: none;
-    }
     .routine-step .rs-part2 {
       flex: 1;
-      width: auto; flex-basis: auto;
+      width: auto !important; flex-basis: auto !important;
       margin-top: 0;
       order: 2;
     }
+    .routine-step .rs-part2 .rs-step-name { display: none; }
     .routine-step span.prod-fit {
       order: 3;
       align-self: center;
@@ -1470,8 +1468,10 @@
     position: relative; z-index: 1;
   }
   .rs-step-name { font-size: 12px; font-weight: 400; color: var(--ink-muted); line-height: 1.5; filter: drop-shadow(0 1px 4px rgba(24,16,14,0.05)); }
+  .rs-prod-type { font-size: 12px; font-weight: 400; color: var(--ink-muted); line-height: 1.5; filter: drop-shadow(0 1px 4px rgba(24,16,14,0.05)); }
   .rs-step-desc { font-size: 12px; font-weight: 500; color: var(--ink); margin-bottom: 2px; filter: drop-shadow(0 1px 4px rgba(24,16,14,0.06)); }
   .rs-prod-name { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 1px; filter: drop-shadow(0 1px 4px rgba(24,16,14,0.06)); }
+  .rs-prod-brand { font-size: 12px; font-weight: 400; color: var(--ink-muted); line-height: 1.5; filter: drop-shadow(0 1px 4px rgba(24,16,14,0.05)); }
   .rs-prod-instr { font-size: 12px; font-style: italic; color: var(--wine); line-height: 1.5; filter: drop-shadow(0 1px 4px rgba(24,16,14,0.05)); }
   .dica-title { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 1px; filter: drop-shadow(0 1px 4px rgba(24,16,14,0.06)); }
   .dica-sub   { font-size: 12px; font-weight: 400; color: var(--ink-soft); line-height: 1.5; filter: drop-shadow(0 1px 4px rgba(24,16,14,0.05)); }
@@ -1479,7 +1479,7 @@
   /* Produtos */
   .product-recs { display: flex; flex-direction: column; gap: 10px; }
   .prod-rec {
-    display: flex; align-items: center; gap: 16px;
+    display: flex; align-items: flex-start; gap: 16px;
     padding: 18px;
     background: linear-gradient(135deg, var(--wine-pale) 0%, rgba(247,242,234,0.70) 100%);
     border: 1.5px solid rgba(168,85,104,0.22);
@@ -1515,6 +1515,10 @@
       align-items: flex-start;
       gap: 10px;
     }
+    .prod-rec > div:not([class]),
+    .prod-rec > div:not([class*="pr-"]) {
+      align-self: flex-start;
+    }
     .prod-rec img,
     .prod-rec > div[style*="56px"] {
       flex-shrink: 0;
@@ -1528,12 +1532,11 @@
       align-self: flex-start;
     }
     .prod-rec .pr-part2 {
-      width: 100%;
-      flex-basis: 100%;
-      padding-right: 0;
+      display: none;
     }
     .prod-rec .prod-name {
       padding-right: 0;
+      margin-top: -3px;
     }
   }
   .prod-emoji {
@@ -5134,7 +5137,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
           : '<div style="width:56px;height:56px;border-radius:16px;background:var(--wine-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;font-weight:600;color:var(--wine);box-shadow:0 2px 8px rgba(168,85,104,0.15);position:relative;z-index:1;">' + inicial + '</div>';
         // Linha 1: nome da etapa — rs-step-name (12px, ink-soft)
         const nomeLine = (p.nome)
-          ? '<div class="rs-step-name">' + p.nome + '</div>'
+          ? '<div class="rs-prod-type">' + p.nome + '</div>'
           : '';
         // Linha 2: nome do produto — rs-prod-name (15px, ink, 500)
         // Remove prefixo da marca se a IA colou junto (ex: "Principia Creme..." → "Creme...")
@@ -5158,7 +5161,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
           ? '<div class="rs-prod-name">' + prodNomeLimpo + '</div>'
           : '';
         const brandLine = p.marca
-          ? '<div class="rs-step-name">' + p.marca + '</div>'
+          ? '<div class="rs-prod-brand">' + p.marca + '</div>'
           : '';
         // Linha 3: instrução — rs-prod-instr (12px, itálico, wine), sem ponto final
         const descLine = (p.descricao)
@@ -5172,9 +5175,8 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
           : '';
         return '<div class="routine-step">' +
           imgHtml +
-          '<div class="rs-part1" style="position:relative;z-index:1;flex:1;">' + nomeLine + '</div>' +
           precoPilula +
-          '<div class="rs-part2" style="position:relative;z-index:1;width:100%;flex-basis:100%;">' + prodLine + brandLine + descLine + '</div>' +
+          '<div class="rs-part2" style="position:relative;z-index:1;width:100%;flex-basis:100%;">' + nomeLine + prodLine + brandLine + descLine + '</div>' +
         '</div>';
       }).join('');
     }
@@ -5210,6 +5212,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
           return '<div class="prod-rec">' +
             imgHtml +
             '<div class="pr-part1" style="position:relative;z-index:1;flex:1;">' +
+              '<div class="prod-name">' + nomeLimpo + '</div>' +
               '<div class="prod-brand">' + p.marca + '</div>' +
               '<div class="prod-price">' + preco + '</div>' +
             '</div>' +
