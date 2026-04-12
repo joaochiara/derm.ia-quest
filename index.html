@@ -5078,8 +5078,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
             '<div class="rs-emoji">' + emoji + '</div>' +
             '<div>' +
               '<div class="dica-title">' + (function(t) {
-                t = t.length > 69 ? t.slice(0, 69) + '…' : t;
-                while (t.replace(/\u00A0/g, ' ').length < 53) t += '\u00A0';
+                t = t.length > 33 ? t.slice(0, 33) + '…' : t;
                 return t;
               })(d.titulo) + '</div>' +
               '<div class="dica-sub">' + limparSubtituloDica(d.subtitulo) + '</div>' +
@@ -5185,8 +5184,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
         const descLine = (p.descricao)
           ? '<div class="rs-prod-instr">' + (function(t) {
               t = semPontoFinal(t);
-              t = t.length > 75 ? t.slice(0, 75) + '…' : t;
-              while (t.replace(/\u00A0/g, ' ').length < 61) t += '\u00A0';
+              t = t.length > 40 ? t.slice(0, 40) + '…' : t;
               return t;
             })(p.descricao) + '</div>'
           : '';
@@ -5745,7 +5743,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
     }
 
     function updateAttractor() {
-      const mobileOffset = window.innerWidth <= 580 ? 130 : 0;
+      const mobileOffset = window.innerWidth <= 580 ? 50 : 0;
       const el = document.getElementById('particle-attractor');
       if (!el) { cx = W / 2; cy = H / 2 + mobileOffset; return; }
       const er = el.getBoundingClientRect();
@@ -8879,4 +8877,22 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
 
   </script>
 </footer>
+<script>
+// Chrome mobile autoplay fix: força play em todos os vídeos no primeiro toque
+(function() {
+  var played = false;
+  function forcePlayAll() {
+    if (played) return;
+    played = true;
+    document.querySelectorAll('video').forEach(function(v) {
+      v.muted = true;
+      var p = v.play();
+      if (p && typeof p.catch === 'function') p.catch(function(){});
+    });
+  }
+  document.addEventListener('touchstart', forcePlayAll, { once: true, passive: true });
+  document.addEventListener('touchend',   forcePlayAll, { once: true, passive: true });
+  document.addEventListener('click',      forcePlayAll, { once: true, passive: true });
+})();
+</script>
 </html>
