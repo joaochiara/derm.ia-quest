@@ -4828,7 +4828,7 @@ idadePele deve ser um número inteiro entre 10% e 20% acima da idade cronológic
 O campo fit em indicadosParaVoce deve ser um número inteiro de 0 a 100.
 indicadosParaVoce deve conter entre 4 e 6 produtos de categorias variadas e complementares.
 Cada período da rotina (matinal e noturna) deve ter no máximo 5 passos. Priorize os ativos de maior impacto clínico — omita os complementares se necessário para respeitar o limite.
-O campo descricao de cada passo deve ter OBRIGATORIAMENTE entre 65 e 90 caracteres (nunca menos que 65 nem mais que 90) — seja direto e objetivo. Use "e" para conectar ações em vez de vírgula (ex: "Aplique no rosto úmido e massageie por 30s antes de enxaguar"). Nunca use ponto final nem ponto de exclamação.
+O campo descricao de cada passo deve ter OBRIGATORIAMENTE no máximo 47 caracteres (nunca mais que 47) — seja direto e objetivo. Nunca use ponto final nem ponto de exclamação.
 rotinaSemanal deve ser incluída apenas se clinicamente indicado, com no máximo 2 passos. Se não houver indicação, retorne rotinaSemanal como array vazio [].
 Todos os campos de nome, marca, preco, urlProduto e urlImagem devem ser copiados exatamente como estão na lista — sem alterações.
 Nos nomes dos produtos, NUNCA use travessão (—). Se o nome original contiver travessão, substitua por hífen (-).
@@ -5065,7 +5065,6 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
             '<div>' +
               '<div class="dica-title">' + (function(t) {
                 t = t.length > 69 ? t.slice(0, 69) + '…' : t;
-                while (t.replace(/\u00A0/g, ' ').length < 53) t += '\u00A0';
                 return t;
               })(d.titulo) + '</div>' +
               '<div class="dica-sub">' + limparSubtituloDica(d.subtitulo) + '</div>' +
