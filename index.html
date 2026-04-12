@@ -945,7 +945,7 @@
   /* ── AGUARDANDO ── */
   .aguardando-screen { text-align: center; padding: 16px 0; }
   @media (max-width: 580px) {
-    .aguardando-screen { transform: translateY(150px); }
+    .aguardando-screen { transform: translateY(110px); }
   }
 
   /* Fade out do conteúdo da screen aguardando após última pílula */
@@ -1350,7 +1350,7 @@
     .rs-title { font-size: 26px; }
   }
 
-  .diagnosis-text { font-size: 15px; line-height: 1.8; color: var(--ink-soft); filter: drop-shadow(0 2px 6px rgba(24,16,14,0.06)); }
+  .diagnosis-text { font-size: 15px; line-height: 1.8; color: var(--ink); filter: drop-shadow(0 2px 6px rgba(24,16,14,0.06)); }
   .diagnosis-text strong { color: var(--ink); font-weight: 500; }
 
   /* Rotina */
@@ -4842,12 +4842,12 @@ idadePele deve ser um número inteiro entre 10% e 20% acima da idade cronológic
 O campo fit em indicadosParaVoce deve ser um número inteiro de 0 a 100.
 indicadosParaVoce deve conter entre 4 e 6 produtos de categorias variadas e complementares.
 Cada período da rotina (matinal e noturna) deve ter no máximo 5 passos. Priorize os ativos de maior impacto clínico — omita os complementares se necessário para respeitar o limite.
-O campo descricao de cada passo deve ter OBRIGATORIAMENTE no máximo 40 caracteres (nunca mais que 40) — seja direto e objetivo. Nunca use ponto final nem ponto de exclamação.
+O campo descricao de cada passo deve ter OBRIGATORIAMENTE no máximo 40 caracteres (nunca mais que 40, nunca use reticências ou corte de texto). Seja direto e objetivo. Nunca use ponto final nem ponto de exclamação.
 rotinaSemanal deve ser incluída apenas se clinicamente indicado, com no máximo 2 passos. Se não houver indicação, retorne rotinaSemanal como array vazio [].
 Todos os campos de nome, marca, preco, urlProduto e urlImagem devem ser copiados exatamente como estão na lista — sem alterações.
 Nos nomes dos produtos, NUNCA use travessão (—). Se o nome original contiver travessão, substitua por hífen (-).
 O conjunto de produtos indicados na rotinaMatinal, rotinaNoturna, rotinaSemanal e indicadosParaVoce deve obrigatoriamente incluir produtos de no mínimo 3 marcas diferentes. Se a seleção natural resultar em menos de 3 marcas, substitua um ou mais produtos por equivalentes de outras marcas disponíveis na lista, mantendo a adequação clínica.
-dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentacao, luzAzul e sono. Cada campo tem um titulo OBRIGATORIAMENTE com no máximo 33 caracteres (nunca mais que 33 — use frases curtas e diretas como "Beba mais água" ou "Proteja do sol"). O subtitulo deve ter OBRIGATORIAMENTE entre 55 e 75 caracteres (nunca menos que 55 nem mais que 75), sem ponto final nem ponto de exclamação. Os textos devem ser personalizados com base nas respostas da paciente — tom positivo quando o hábito é bom, orientativo quando precisa melhorar. Nunca use textos genéricos.`;
+dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentacao, luzAzul e sono. Cada campo tem um titulo OBRIGATORIAMENTE com no máximo 33 caracteres (nunca mais que 33, nunca use reticências ou corte de texto — use frases curtas e diretas como "Beba mais água" ou "Proteja do sol"). O subtitulo deve ter OBRIGATORIAMENTE entre 55 e 75 caracteres (nunca menos que 55 nem mais que 75), sem ponto final nem ponto de exclamação. Os textos devem ser personalizados com base nas respostas da paciente — tom positivo quando o hábito é bom, orientativo quando precisa melhorar. Nunca use textos genéricos.`;
 
     const response = await fetch('https://esxgbspxuajrpoxehgam.supabase.co/functions/v1/analisar', {
       method: 'POST',
@@ -5078,7 +5078,6 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
             '<div class="rs-emoji">' + emoji + '</div>' +
             '<div>' +
               '<div class="dica-title">' + (function(t) {
-                t = t.length > 33 ? t.slice(0, 33) + '…' : t;
                 return t;
               })(d.titulo) + '</div>' +
               '<div class="dica-sub">' + limparSubtituloDica(d.subtitulo) + '</div>' +
@@ -5184,7 +5183,6 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
         const descLine = (p.descricao)
           ? '<div class="rs-prod-instr">' + (function(t) {
               t = semPontoFinal(t);
-              t = t.length > 40 ? t.slice(0, 40) + '…' : t;
               return t;
             })(p.descricao) + '</div>'
           : '';
@@ -5743,7 +5741,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
     }
 
     function updateAttractor() {
-      const mobileOffset = window.innerWidth <= 580 ? 50 : 0;
+      const mobileOffset = window.innerWidth <= 580 ? -30 : 0;
       const el = document.getElementById('particle-attractor');
       if (!el) { cx = W / 2; cy = H / 2 + mobileOffset; return; }
       const er = el.getBoundingClientRect();
