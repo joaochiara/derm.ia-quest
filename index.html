@@ -1182,10 +1182,6 @@
   #radar-chart-wrap {
     margin-top: 8px;
     margin-bottom: 24px;
-    background: var(--ivory);
-    border-radius: 20px;
-    padding: 15px;
-    box-shadow: 0 2px 12px rgba(168,85,104,0.08), inset 0 1px 0 rgba(255,255,255,0.80);
   }
   #skin-radar {
     filter: drop-shadow(0 4px 18px rgba(168,85,104,0.12));
@@ -5161,6 +5157,13 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
 
       let svgHtml = '';
 
+      // Ivory background polygon matching the outermost octagon ring
+      (function() {
+        let bgPts = [];
+        for (let i = 0; i < n; i++) bgPts.push(polar(2 * Math.PI * i / n, maxR));
+        svgHtml += `<polygon points="${bgPts.map(p=>p.join(',')).join(' ')}" fill="#F7F2EA"/>`;
+      })();
+
       // Concentric octagon rings (grid)
       for (let ri = 1; ri <= 5; ri++) {
         const rr = maxR * ri / 5;
@@ -5188,14 +5191,20 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
         svgHtml += `<circle class="radar-dot" cx="${x}" cy="${y}" r="4" fill="var(--wine)" opacity="0"/>`;
       });
 
-      // Labels at each tip — font-size 12
+      // Labels at each tip — font-size 12, weight 900, shadow like result-sub
+      const shadowId = 'radar-label-shadow';
+      svgHtml = `<defs><filter id="${shadowId}" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(24,16,14,0.06)"/>
+      </filter></defs>` + svgHtml;
+
       labels.forEach((lbl, i) => {
         const angle = 2 * Math.PI * i / n;
         const [lx, ly] = polar(angle, maxR + 24);
         const anchor = Math.abs(Math.sin(angle)) < 0.15 ? 'middle' : (Math.sin(angle) > 0 ? 'start' : 'end');
         const dy = Math.cos(angle) > 0.15 ? '-0.3em' : (Math.cos(angle) < -0.15 ? '1.1em' : '0.4em');
         svgHtml += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dy="${dy}"
-          font-family="DM Sans,sans-serif" font-size="12" fill="#4A3A34" font-weight="500">${lbl}</text>`;
+          font-family="DM Sans,sans-serif" font-size="12" fill="#4A3A34" font-weight="900"
+          filter="url(#${shadowId})">${lbl}</text>`;
       });
 
       const svg = document.getElementById('skin-radar');
