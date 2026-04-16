@@ -1174,103 +1174,6 @@
       margin-bottom: 20px;
     }
 
-    /* ── CRACHÁ ── */
-    #result-cracha {
-      background: rgba(253,250,247,0.60);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,0.65);
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow:
-        0 2px 0px rgba(255,255,255,0.80),
-        0 10px 36px rgba(24,16,14,0.11),
-        0 1px 0 rgba(255,255,255,0.95) inset,
-        0 -1px 0 rgba(0,0,0,0.05) inset;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .cracha-top {
-      background: var(--wine);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-    }
-
-    .cracha-photo-wrap {
-      padding: 20px 20px 10px;
-      display: flex;
-      justify-content: center;
-    }
-    .cracha-photo-wrap .result-photo-box {
-      width: 50%;
-      aspect-ratio: 3/4;
-      border-radius: 14px;
-      overflow: hidden;
-    }
-    .cracha-photo-wrap .result-photo-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .cracha-photo-wrap .photo-placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      font-size: 42px;
-      background: var(--ivory-dark);
-      border-radius: 14px;
-    }
-
-    .cracha-info {
-      padding: 14px 20px 22px;
-    }
-    .cracha-name {
-      font-family: var(--serif);
-      font-size: clamp(28px, 4vw, 42px);
-      font-weight: 700;
-      color: var(--ink);
-      letter-spacing: -0.02em;
-      margin-bottom: 12px;
-      line-height: 1.1;
-      filter: drop-shadow(0 1px 4px rgba(24,16,14,0.08));
-    }
-    .cracha-divider {
-      height: 1px;
-      background: linear-gradient(90deg, var(--wine-light), transparent);
-      margin-bottom: 12px;
-    }
-    .cracha-fields {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-    .cracha-field {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-    }
-    .cracha-field-label {
-      font-size: 12px;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--ink-muted);
-      flex-shrink: 0;
-    }
-    .cracha-field-val {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--ink-soft);
-      text-align: right;
-    }
-
     /* Score rows na col-left: 2 colunas em vez de 4 */
     .result-col-left .score-row {
       grid-template-columns: repeat(2, 1fr);
@@ -1334,35 +1237,91 @@
     .result-col-right #box-dicas-inteligentes-mobile { order: 10; }
   }
 
-  /* Mobile: layout linear, col-left oculta (seus elementos já existem na col-right como mobile-only) */
+  /* Mobile: layout da screen resultado */
   @media (max-width: 580px) {
+    /* Two-col vira coluna única empilhada */
     .result-two-col-wrap {
       display: flex;
       flex-direction: column;
     }
-    /* Em mobile: col-left visível, mas filhos específicos ocultados — produto essencial e combinam permanecem visíveis */
-    .result-col-left > *:not(#box-produto-essencial):not(#box-combinam) {
-      display: none !important;
+    /* col-left e col-right ocupam 100% da largura */
+    .result-col-left,
+    .result-col-right {
+      width: 100%;
     }
-    /* Em mobile: foto frente isolada oculta (usa o carrossel) */
+    /* col-left oculta no mobile — crachá é movido para col-right via JS */
+    .result-col-left  { display: none !important; }
+    .result-col-right { order: 1; display: flex; flex-direction: column; }
+
+    /* Crachá (movido para col-right via JS) visível no mobile */
     .result-photo-front-only {
+      display: block !important;
+    }
+    /* Carrossel oculto no mobile (substituído pelo crachá) */
+    .result-photos-wrap,
+    #result-photos-wrap {
       display: none !important;
     }
-    /* Em mobile: boxes mobile-only visíveis */
+    /* Boxes mobile-only visíveis */
     .result-section-mobile-only {
       display: block !important;
     }
-    /* Em mobile: box dicas-inteligentes na col-left oculto (existe mobile-only na col-right) */
+    /* Score rows mantêm display:grid (não podem ser display:block) */
+    .score-row.result-section-mobile-only {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    /* Box dicas-inteligentes original (col-left) oculto — existe clone mobile-only na col-right */
     #box-dicas-inteligentes {
       display: none !important;
     }
+    /* Ordem dos elementos da col-right no mobile */
+    .result-col-right .result-badge                   { order: 1; align-self: flex-start; }
+    .result-col-right #resultTitle                    { order: 2; }
+    .result-col-right #resultSubtitle                 { order: 3; }
+    /* 4: crachá mobile — entre subtítulo e radar */
+    .result-col-right #cracha-mobile-wrap             { order: 4; margin-top: -10px; }
+    /* 5: radar da pele */
+    .result-col-right #radar-chart-wrap-mobile        { order: 5; }
+    /* Radar mobile: padding alinhado com os outros boxes e margin-top 20px */
+    #radar-chart-wrap-mobile {
+      padding: 24px 10px 16px 26px !important;
+      margin-top: 20px !important;
+    }
+    #radar-pill-container-mobile {
+      max-width: 240px !important;
+    }
+    #radar-pill-container-mobile .radar-label-pill {
+      font-size: 8px !important;
+      padding: 3px 6px !important;
+      letter-spacing: 0.02em !important;
+    }
+    /* 6 e 7: 2 linhas com 4 score pills cada */
+    .result-col-right #score-row-1-mobile             { order: 6; margin-top: 20px; }
+    .result-col-right #score-row-2-mobile             { order: 7; }
+    /* 8: box avaliação da ia */
+    .result-col-right #box-avaliacao-ia               { order: 8; }
+    /* 9: box idade da pele */
+    .result-col-right #box-idade-pele                 { order: 9; }
+    /* 10: box produto essencial mobile */
+    .result-col-right #box-produto-essencial-mobile   { order: 10; margin-top: 5px; }
+    /* 11: box protocolo completo */
+    .result-col-right #box-protocolo-completo         { order: 11; }
+    /* 12: box dicas inteligentes mobile */
+    .result-col-right #box-dicas-inteligentes-mobile  { order: 12; }
+    /* 13: box combinam com você mobile */
+    .result-col-right #box-combinam-mobile            { order: 13; }
+    /* 14: box cta */
+    .result-col-right #result-cta-box                 { order: 14; }
   }
 
   /* Animações de entrada do título e subtítulo da screen resultado — igual à screen 0 */
   /* Boxes da screen resultado: começam invisíveis — JS anima a entrada */
   #screen-result .score-pill,
   #screen-result .result-section,
-  #screen-result .result-cta {
+  #screen-result .result-cta,
+  #result-cracha,
+  #result-cracha-mobile {
     opacity: 0;
   }
 
@@ -1379,6 +1338,131 @@
   }
   #screen-result .result-sub.sub-visible {
     opacity: 1;
+  }
+
+  /* ── CRACHÁ (global — funciona em desktop e mobile) ── */
+  #result-cracha,
+  #result-cracha-mobile {
+    background: rgba(253,250,247,0.60);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.65);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow:
+      0 2px 0px rgba(255,255,255,0.80),
+      0 10px 36px rgba(24,16,14,0.11),
+      0 1px 0 rgba(255,255,255,0.95) inset,
+      0 -1px 0 rgba(0,0,0,0.05) inset;
+    display: flex;
+    flex-direction: column;
+  }
+  .cracha-top {
+    background: var(--wine);
+    padding: 14px 20px;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+  .cracha-hole-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 28px;
+  }
+  .cracha-hole {
+    width: 52px;
+    height: 28px;
+    border-radius: 100px;
+    background: transparent;
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,0.30),
+      inset 0 2px 6px rgba(0,0,0,0.35),
+      inset 0 1px 2px rgba(0,0,0,0.20);
+    border: 1.5px solid rgba(255,255,255,0.18);
+    position: relative;
+    overflow: hidden;
+  }
+  .cracha-hole::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 10%; right: 10%;
+    height: 35%;
+    background: linear-gradient(180deg, rgba(0,0,0,0.18) 0%, transparent 100%);
+    border-radius: 100px;
+  }
+  .cracha-photo-wrap {
+    padding: 20px 20px 10px;
+    display: flex;
+    justify-content: center;
+  }
+  .cracha-photo-wrap .result-photo-box {
+    width: 50%;
+    aspect-ratio: 3/4;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .cracha-photo-wrap .result-photo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .cracha-photo-wrap .photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 42px;
+    background: var(--ivory-dark);
+    border-radius: 14px;
+  }
+  .cracha-info {
+    padding: 14px 20px 22px;
+  }
+  .cracha-name {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    line-height: 1.1;
+    filter: drop-shadow(0 1px 4px rgba(24,16,14,0.08));
+  }
+  .cracha-divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--wine-light), transparent);
+    margin-bottom: 12px;
+  }
+  .cracha-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .cracha-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .cracha-field-label {
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    flex-shrink: 0;
+  }
+  .cracha-field-val {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    text-align: right;
   }
 
   /* ── RADAR CHART ── */
@@ -4030,20 +4114,20 @@
       <!-- ── COLUNA ESQUERDA ── -->
       <div class="result-col-left">
 
-        <!-- Crachá — desktop only, substitui o photobox -->
-        <div class="result-photo-front-only" id="result-photo-front-only-wrap" style="display:none;">
+        <!-- Crachá — desktop: visível na col-left; mobile: col-left fica visível apenas para este elemento -->
+        <div class="result-photo-front-only" id="result-photo-front-only-wrap">
           <div id="result-cracha">
-            <!-- Topo decorativo do crachá -->
             <div class="cracha-top">
+              <div class="cracha-hole-wrap">
+                <div class="cracha-hole"></div>
+              </div>
               <div class="result-badge badge-visible" style="margin-bottom:0; opacity:1; transform:none; transition:none;">✦ PACIENTE</div>
             </div>
-            <!-- Foto -->
             <div class="cracha-photo-wrap">
               <div class="result-photo-box" id="result-photo-front-desktop">
                 <div class="photo-placeholder">📸</div>
               </div>
             </div>
-            <!-- Dados do usuário -->
             <div class="cracha-info">
               <div class="cracha-name" id="crachaName">—</div>
               <div class="cracha-divider"></div>
@@ -4100,10 +4184,10 @@
           <div id="dicas-lista" style="display:flex; flex-direction:column; gap:6px; margin-top:4px;"></div>
         </div>
 
-        <!-- BOX: Produto Essencial — desktop only (em mobile aparece via col-left visível) -->
+        <!-- BOX: Produto Essencial — desktop only (em mobile aparece via #box-produto-essencial-mobile na col-right) -->
         <div class="result-section" id="box-produto-essencial">
           <div class="rs-title">Seu produto essencial</div>
-          <p class="diagnosis-text" style="margin-bottom:15px;">Com base na sua avaliação, a IA identificou o <strong>maior ponto fraco</strong> da sua pele - e esse é o produto que age diretamente na raiz do problema.</p>
+          <p class="diagnosis-text" style="margin-bottom:15px;">Baseado na avaliação, a IA identificou o <strong>maior ponto fraco</strong> da sua pele - e esse produto age diretamente na raiz do problema.</p>
           <div class="essential-product-wrap">
             <div class="essential-product-card">
               <div class="essential-emoji-wrap" id="essentialEmoji">💧</div>
@@ -4167,6 +4251,43 @@
 
         <p class="result-sub" id="resultSubtitle" style="visibility:hidden;">Oi, <span id="resultNome">você</span>! Agora que passou por todas as etapas, aqui está a <strong>rotina personalizada</strong> que montamos para os seus próximos 15 dias.</p>
 
+        <!-- CRACHÁ — mobile only (original na col-left, este é o clone para mobile) -->
+        <div class="result-section-mobile-only" id="cracha-mobile-wrap" style="display:none;">
+          <div id="result-cracha-mobile">
+            <div class="cracha-top">
+              <div class="cracha-hole-wrap"><div class="cracha-hole"></div></div>
+              <div class="result-badge badge-visible" style="margin-bottom:0; opacity:1; transform:none; transition:none;">✦ PACIENTE</div>
+            </div>
+            <div class="cracha-photo-wrap">
+              <div class="result-photo-box" id="result-photo-front-mobile">
+                <div class="photo-placeholder">📸</div>
+              </div>
+            </div>
+            <div class="cracha-info">
+              <div class="cracha-name" id="crachaName-mobile">—</div>
+              <div class="cracha-divider"></div>
+              <div class="cracha-fields">
+                <div class="cracha-field">
+                  <span class="cracha-field-label">Idade</span>
+                  <span class="cracha-field-val" id="crachaIdade-mobile">—</span>
+                </div>
+                <div class="cracha-field">
+                  <span class="cracha-field-label">Cidade</span>
+                  <span class="cracha-field-val" id="craCidade-mobile">—</span>
+                </div>
+                <div class="cracha-field">
+                  <span class="cracha-field-label">Tipo de pele</span>
+                  <span class="cracha-field-val" id="craTipo-mobile">—</span>
+                </div>
+                <div class="cracha-field">
+                  <span class="cracha-field-label">Alergias</span>
+                  <span class="cracha-field-val" id="craAlergia-mobile">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- RADAR CHART — mobile only (em desktop fica na col-right dentro de box) -->
         <div id="radar-chart-wrap-mobile" class="result-section result-section-mobile-only" style="display:flex; flex-direction:column; align-items:stretch; padding:24px 26px;">
           <div class="rs-title">Radar da pele</div>
@@ -4178,13 +4299,13 @@
         </div>
 
         <!-- SCORE PILLS — mobile only (em desktop ficam na col-left) -->
-        <div class="score-row result-section-mobile-only" id="score-row-1-mobile" style="margin-top:-10px;">
+        <div class="score-row result-section-mobile-only" id="score-row-1-mobile" style="margin-top:0px;">
           <div class="score-pill"><div class="score-val">48%</div><div class="score-lbl">Hidratação</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="48%"></div></div></div>
           <div class="score-pill"><div class="score-val">57%</div><div class="score-lbl">Brilho</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="57%"></div></div></div>
           <div class="score-pill"><div class="score-val">63%</div><div class="score-lbl">Firmeza</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="63%"></div></div></div>
           <div class="score-pill"><div class="score-val">72%</div><div class="score-lbl">Textura</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="72%"></div></div></div>
         </div>
-        <div class="score-row result-section-mobile-only" style="margin-top:8px;">
+        <div class="score-row result-section-mobile-only" id="score-row-2-mobile" style="margin-top:8px;">
           <div class="score-pill"><div class="score-val">44%</div><div class="score-lbl">Oleosidade</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="44%"></div></div></div>
           <div class="score-pill"><div class="score-val">81%</div><div class="score-lbl">Sensibilidade</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="81%"></div></div></div>
           <div class="score-pill"><div class="score-val">31%</div><div class="score-lbl">Rugas</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="31%"></div></div></div>
@@ -4260,6 +4381,24 @@
           <p class="cta-note">🔓 7 dias grátis · Cancele quando quiser</p>
         </div>
 
+        <!-- BOX: Produto Essencial — mobile only (original na col-left) -->
+        <div class="result-section result-section-mobile-only" id="box-produto-essencial-mobile">
+          <div class="rs-title">Seu produto essencial</div>
+          <p class="diagnosis-text" style="margin-bottom:15px;">Baseado na avaliação, a IA identificou o <strong>maior ponto fraco</strong> da sua pele - e esse produto age diretamente na raiz do problema.</p>
+          <div class="essential-product-wrap">
+            <div class="essential-product-card">
+              <div class="essential-emoji-wrap" id="essentialEmoji-mobile">💧</div>
+              <div class="essential-prod-info">
+                <div class="essential-prod-name" id="essentialName-mobile">Hydra Boost Oil-Free</div>
+                <div class="essential-prod-brand" id="essentialBrand-mobile">Neutrogena</div>
+                <div class="essential-prod-brand" id="essentialPrice-mobile">~R$ 72</div>
+              </div>
+              <span class="essential-badge" id="essentialBadge-mobile">⭑ Prioridade</span>
+              <div class="essential-prod-reason" id="essentialReason-mobile">Sua pele está pedindo por <strong>mais hidratação</strong> — o parâmetro mais baixo do seu diagnóstico. Esse produto resolve o desequilíbrio que está na raiz da maioria dos outros sintomas.</div>
+            </div>
+          </div>
+        </div>
+
         <!-- Dicas inteligentes — mobile only (na col-left em desktop) -->
         <div class="result-section result-section-mobile-only" id="box-dicas-inteligentes-mobile" style="background:var(--ink); border-radius:22px; padding:28px 26px; position:relative; overflow:hidden; margin-top: 6px; box-shadow:0 8px 32px rgba(74,127,165,0.22), inset 0 1px 0 rgba(255,255,255,0.07);">
           <!-- glow wine topo -->
@@ -4268,6 +4407,12 @@
           <div style="position:absolute;bottom:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,var(--steel) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
           <div class="rs-title" style="color:var(--ivory);">Dicas inteligentes</div>
           <div id="dicas-lista-mobile" style="display:flex; flex-direction:column; gap:6px; margin-top:4px;"></div>
+        </div>
+
+        <!-- BOX: Combinam com você — mobile only (original na col-left) -->
+        <div class="result-section result-section-mobile-only" id="box-combinam-mobile">
+          <div class="rs-title">Combinam com você</div>
+          <div class="product-recs" id="indicados-para-voce-mobile"></div>
         </div>
 
       </div><!-- /result-col-right -->
@@ -5737,6 +5882,10 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
     // Popula fotos do scanner na screen resultado
     (function() {
       const caps = answers && answers['scanner_captures'];
+      // Sempre exibe o crachá (com foto real ou placeholder) — display controlado via CSS
+      // const frontOnlyWrap = document.getElementById('result-photo-front-only-wrap');
+      // if (frontOnlyWrap) frontOnlyWrap.style.display = 'flex';
+
       const wrap = document.getElementById('result-photos-wrap');
       if (!wrap) return;
       const map = { front: 'result-photo-front', left: 'result-photo-right', right: 'result-photo-left' };
@@ -5765,11 +5914,10 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       });
       // Sempre exibe o box — com fotos reais ou com placeholders
       wrap.style.display = 'flex';
-      // Exibe foto frente isolada no desktop
-      const frontOnlyWrap = document.getElementById('result-photo-front-only-wrap');
-      if (frontOnlyWrap) frontOnlyWrap.style.display = 'flex';
+    })();
 
-      // Popula dados do crachá
+    // Popula dados do crachá
+    (function() {
       const crachaName  = document.getElementById('crachaName');
       const crachaIdade = document.getElementById('crachaIdade');
       const craCidade   = document.getElementById('craCidade');
@@ -5795,6 +5943,34 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
           craAlergia.textContent = _alergia;
         } else {
           craAlergia.textContent = 'Nenhuma';
+        }
+      }
+      // ── Espelha dados para o clone mobile ──
+      const mNome   = document.getElementById('crachaName-mobile');
+      const mIdade  = document.getElementById('crachaIdade-mobile');
+      const mCidade = document.getElementById('craCidade-mobile');
+      const mTipo   = document.getElementById('craTipo-mobile');
+      const mAler   = document.getElementById('craAlergia-mobile');
+      if (mNome)   mNome.textContent   = _nome;
+      if (mIdade)  mIdade.textContent  = _idade ? _idade + ' anos' : '—';
+      if (mCidade) mCidade.textContent = _cidade;
+      if (mTipo)   mTipo.textContent   = tipoMap[_tipo] || _tipo;
+      if (mAler) {
+        const alergiaLower = (_alergia || '').toLowerCase().trim();
+        mAler.textContent = (_alergia && alergiaLower !== 'nenhuma' && alergiaLower !== 'nao' && alergiaLower !== 'não' && alergiaLower !== '') ? _alergia : 'Nenhuma';
+      }
+      // Exibe o clone mobile
+      const crachaMobileWrap = document.getElementById('cracha-mobile-wrap');
+      if (crachaMobileWrap) crachaMobileWrap.style.display = 'block';
+      // Sincroniza foto frente para o clone mobile
+      const caps = answers && answers['scanner_captures'];
+      if (caps && caps.front) {
+        const mPhotoBox = document.getElementById('result-photo-front-mobile');
+        if (mPhotoBox) {
+          mPhotoBox.innerHTML = '';
+          const imgM = document.createElement('img');
+          imgM.src = caps.front;
+          mPhotoBox.appendChild(imgM);
         }
       }
     })();
@@ -5896,6 +6072,19 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       if (price)  price.textContent = 'R$ ' + pe.preco.toFixed(2).replace('.', ',');
       if (reason) reason.innerHTML  = pe.motivo;
       if (badge)  badge.textContent = '⭑ Prioridade';
+      // ── Espelha dados para o clone mobile ──
+      const emojiM  = document.getElementById('essentialEmoji-mobile');
+      const nameM   = document.getElementById('essentialName-mobile');
+      const brandM  = document.getElementById('essentialBrand-mobile');
+      const priceM  = document.getElementById('essentialPrice-mobile');
+      const reasonM = document.getElementById('essentialReason-mobile');
+      const badgeM  = document.getElementById('essentialBadge-mobile');
+      if (emojiM)  emojiM.innerHTML  = emoji  ? emoji.innerHTML  : emojiChar;
+      if (nameM)   nameM.textContent  = removerVolume(pe.nome);
+      if (brandM)  brandM.textContent = pe.marca;
+      if (priceM)  priceM.textContent = 'R$ ' + pe.preco.toFixed(2).replace('.', ',');
+      if (reasonM) reasonM.innerHTML  = pe.motivo;
+      if (badgeM)  badgeM.textContent = '⭑ Prioridade';
     }
 
     if (r.dicasInteligentes) {
@@ -6125,6 +6314,9 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
             '</div>' +
           '</div>';
         }).join('');
+        // ── Espelha para o clone mobile ──
+        const prodRecsMobile = document.getElementById('indicados-para-voce-mobile');
+        if (prodRecsMobile) prodRecsMobile.innerHTML = prodRecs.innerHTML;
       }
     }
   }
@@ -6381,6 +6573,9 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
   })();
 
   function showResult() {
+    // Garante que o clone mobile do crachá está visível
+    const crachaMWrap = document.getElementById('cracha-mobile-wrap');
+    if (crachaMWrap) crachaMWrap.style.display = 'block';
     // Se a IA respondeu, preenche os campos com os dados reais antes de animar
     if (window._iaResultado) {
       preencherResultadoIA(window._iaResultado, window._iaNome || 'você');
@@ -6456,9 +6651,19 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       window._renderRadar(scoresArr);
     }, 300);
 
-    // Badge
+    // Badge + crachá desktop entram juntos (500ms)
     setTimeout(() => {
       if (resultBadge) resultBadge.classList.add('badge-visible');
+      const crachaEl = document.getElementById('result-cracha');
+      if (crachaEl) {
+        crachaEl.style.transition = 'opacity 0.55s cubic-bezier(0.22,1,0.36,1)';
+        crachaEl.style.opacity    = '1';
+        // Inicia flutuação imediatamente — o rAF assume o transform desde o início
+        if (typeof window._floatAddCracha === 'function') window._floatAddCracha();
+        setTimeout(() => {
+          if (crachaEl) crachaEl.style.transition = '';
+        }, 570);
+      }
     }, 500);
 
     // Typewriter — inicia após fade-in do h2
@@ -6545,6 +6750,13 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
                   }
                   setTimeout(() => { if (resultSub) resultSub.style.transition = ''; }, 1450);
                 }
+                // Crachá mobile: fade-in sincronizado com o subtítulo
+                const crachaElMSync = document.getElementById('result-cracha-mobile');
+                if (crachaElMSync) {
+                  crachaElMSync.style.transition = 'opacity 1.4s ease';
+                  crachaElMSync.style.opacity = '1';
+                  setTimeout(() => { if (crachaElMSync) crachaElMSync.style.transition = ''; }, 1450);
+                }
                 // Slide-up + fade-in dos boxes começa junto com o subtítulo
                 if (typeof window._floatCollectResult === 'function') window._floatCollectResult();
                 window.dispatchEvent(new Event('result-boxes-ready'));
@@ -6608,6 +6820,10 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
     // Popula fotos do scanner na screen resultado
     (function() {
       const caps = answers && answers['scanner_captures'];
+      // Sempre exibe o crachá (com foto real ou placeholder) — display controlado via CSS
+      // const frontOnlyWrap2 = document.getElementById('result-photo-front-only-wrap');
+      // if (frontOnlyWrap2) frontOnlyWrap2.style.display = 'flex';
+
       const wrap = document.getElementById('result-photos-wrap');
       if (!wrap) return;
       const map = { front: 'result-photo-front', left: 'result-photo-right', right: 'result-photo-left' };
@@ -6636,9 +6852,6 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       });
       // Sempre exibe o box — com fotos reais ou com placeholders
       wrap.style.display = 'flex';
-      // Exibe foto frente isolada no desktop
-      const frontOnlyWrap2 = document.getElementById('result-photo-front-only-wrap');
-      if (frontOnlyWrap2) frontOnlyWrap2.style.display = 'flex';
     })();
 
     // ── Carrossel automático das fotos do scanner ──────────────────────
@@ -7864,6 +8077,17 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       return p;
     }
 
+    // Expõe para uso externo (ex: showResult iniciar flutuação do crachá imediatamente)
+    window._floatAddCracha = function() {
+      const crachaEl = document.getElementById('result-cracha');
+      if (!crachaEl) return;
+      // Remove entradas anteriores do crachá para evitar duplicata
+      params = params.filter(p => p.el.id !== 'result-cracha' && p.el.id !== 'result-cracha-mobile');
+      const pC = makeParamWithX(crachaEl, 0);
+      pC.entryStart = 0; pC.entryDur = 0; pC.entryFromY = 0; pC.easeK = 5.5;
+      params.push(pC);
+    };
+
     // Chamado pelo goTo APÓS a animação CSS de entrada terminar (500ms)
     // Nesse ponto a screen está totalmente visível e sem transforms CSS ativos.
     window._floatCollect = function(activeScreen, forward) {
@@ -7937,22 +8161,34 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
 
     // ── Float + slide-up nos boxes da screen resultado ──────────────────────
     window._floatCollectResult = function() {
-      // Limpa params anteriores
-      params.forEach(p => { p.el.style.transform = ''; p.el.style.opacity = ''; });
+      // Limpa params anteriores (exceto crachá — já está flutuando, não resetar)
+      params.forEach(p => {
+        if (p.el.id === 'result-cracha' || p.el.id === 'result-cracha-mobile') return;
+        p.el.style.transform = ''; p.el.style.opacity = '';
+      });
       params = [];
 
       const sc = document.getElementById('screen-result');
       if (!sc) return;
 
       const targets = Array.from(sc.querySelectorAll('.score-pill, .result-section, .result-cta'));
+
+      // Adiciona o crachá ao float — usa o elemento interno #result-cracha
+      // pois o wrapper pode estar display:none até as fotos carregarem
+      const crachaInner = document.getElementById('result-cracha');
+      if (crachaInner) targets.unshift(crachaInner);
+      // Clone mobile do crachá — também entra no float
+      const crachaInnerM = document.getElementById('result-cracha-mobile');
+      if (crachaInnerM) targets.push(crachaInnerM);
+
       if (!targets.length) return;
 
       const ENTRY_D = 520;
       const EASE_K  = 5.5;
       const fromY   = 32;
 
-      // Delay customizado por ID — score-pills mantêm stagger de 70ms
       const customDelays = {
+        'result-cracha':            0,
         'radar-chart-wrap-mobile':  0,
         'box-avaliacao-ia':         560,
         'box-dicas-inteligentes':   630,
@@ -7961,11 +8197,13 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
         'box-protocolo-completo':   840,
         'box-combinam':             910,
         'result-cta-box':           980,
-        // mobile-only (ocultos em desktop, mas presentes no DOM)
         'box-dicas-inteligentes-mobile': 630,
+        'box-produto-essencial-mobile':  770,
+        'box-combinam-mobile':           910,
       };
 
       targets.forEach(el => {
+        if (el.id === 'result-cracha' || el.id === 'result-cracha-mobile') return;
         el.style.opacity    = '0';
         el.style.transition = '';
         el.style.transform  = `translateY(${fromY}px)`;
@@ -7975,6 +8213,15 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       let scorePillIdx = 0;
       params = targets.map((el, i) => {
         const p = makeParamWithX(el, i);
+
+        if (el.id === 'result-cracha' || el.id === 'result-cracha-mobile') {
+          // Crachá: só flutua, não anima entrada (já foi feita via showResult)
+          p.entryStart = now;
+          p.entryDur   = 0;
+          p.entryFromY = 0;
+          p.easeK      = EASE_K;
+          return p;
+        }
 
         // Score pills: stagger 70ms sequencial
         let delay;
@@ -9948,4 +10195,5 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
   document.addEventListener('click',      forcePlayAll, { once: true, passive: true });
 })();
 </script>
+
 </html>
