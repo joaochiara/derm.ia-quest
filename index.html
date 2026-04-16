@@ -43,6 +43,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     position: relative;
+    touch-action: pan-y;
   }
   @media (max-width: 580px) {
     body { overflow-x: hidden; }
@@ -408,6 +409,8 @@
   }
   .options.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
 
+  /* Ghost click fix: options invisíveis não recebem cliques/toques */
+
   .option {
     background: rgba(253,250,247,0.55);
     backdrop-filter: blur(12px);
@@ -416,6 +419,8 @@
     border-radius: 16px;
     padding: 16px 20px;
     cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     transition: border-color 0.28s cubic-bezier(0.4,0,0.2,1),
                 box-shadow 0.28s cubic-bezier(0.4,0,0.2,1),
                 background 0.28s cubic-bezier(0.4,0,0.2,1),
@@ -4581,19 +4586,20 @@
 
   function goTo(n) {
     window._lastGoToTime = Date.now();
+    console.log('[GOTO] n='+n+' from='+current+' t='+window._lastGoToTime);
     // Bloqueia pointer-events em todo o quiz durante a transição
     // para evitar ghost clicks no mobile (touchend → click sintético ~300ms depois)
     const _qw = document.querySelector('.quiz-wrap');
     if (_qw) {
       _qw.style.pointerEvents = 'none';
-      setTimeout(() => { _qw.style.pointerEvents = ''; }, 520);
+      setTimeout(() => { _qw.style.pointerEvents = ''; }, 800);
     }
     // Cobre também inter-boxes e overlays fora do quiz-wrap
     ['inter1-box','inter2-box','inter3-box','aguardando-overlay','result-overlay'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
         el.style.pointerEvents = 'none';
-        setTimeout(() => { el.style.pointerEvents = ''; }, 520);
+        setTimeout(() => { el.style.pointerEvents = ''; }, 800);
       }
     });
     // Para o scanner quando sai dele
@@ -5095,7 +5101,9 @@
   }
 
   function selectRotinaOption(el, val) {
-    if (Date.now() - window._lastGoToTime < 520) return;
+    const _dt = Date.now() - window._lastGoToTime;
+    console.log('[SELECT] selectRotinaOption val='+val+' dt='+_dt+'ms screen='+current);
+    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     // Seleciona visualmente
     document.getElementById('q_rotina').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
@@ -5134,7 +5142,9 @@
   }
 
   function selectMaquiagemOption(el, val) {
-    if (Date.now() - window._lastGoToTime < 520) return;
+    const _dt = Date.now() - window._lastGoToTime;
+    console.log('[SELECT] selectMaquiagemOption val='+val+' dt='+_dt+'ms screen='+current);
+    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById('q_maquiagem').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers['q_maquiagem'] = val;
@@ -5146,7 +5156,9 @@
   }
 
   function selectAlergiaOption(el, val) {
-    if (Date.now() - window._lastGoToTime < 520) return;
+    const _dt = Date.now() - window._lastGoToTime;
+    console.log('[SELECT] selectAlergiaOption val='+val+' dt='+_dt+'ms screen='+current);
+    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById('q_alergia').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers['q_alergia'] = val;
@@ -5158,7 +5170,9 @@
   }
 
   function selectReceitaOption(el, val) {
-    if (Date.now() - window._lastGoToTime < 520) return;
+    const _dt = Date.now() - window._lastGoToTime;
+    console.log('[SELECT] selectReceitaOption val='+val+' dt='+_dt+'ms screen='+current);
+    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById('q_receita').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers['q_receita'] = val;
@@ -5174,7 +5188,9 @@
   window._lastGoToTime = 0;
 
   function selectOption(el, gid, val) {
-    if (Date.now() - window._lastGoToTime < 520) return;
+    const _dt = Date.now() - window._lastGoToTime;
+    console.log('[SELECT] selectOption gid='+gid+' val='+(val||'?')+' dt='+_dt+'ms screen='+current);
+    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById(gid).querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers[gid] = val || el.querySelector('.opt-label').textContent;
@@ -5232,7 +5248,9 @@
   }
 
   function toggleMulti(el, gid, excl) {
-    if (Date.now() - window._lastGoToTime < 520) return;
+    const _dt = Date.now() - window._lastGoToTime;
+    console.log('[SELECT] toggleMulti gid='+gid+' dt='+_dt+'ms screen='+current);
+    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     const parent = document.getElementById(gid);
     if (excl === 'none') {
       parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -10219,6 +10237,37 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
   document.addEventListener('touchstart', forcePlayAll, { once: true, passive: true });
   document.addEventListener('touchend',   forcePlayAll, { once: true, passive: true });
   document.addEventListener('click',      forcePlayAll, { once: true, passive: true });
+})();
+
+// Previne que o fim de scroll no celular real acione options acidentalmente.
+// Rastreia movimento do toque: se o dedo moveu mais de 8px em Y, cancela o onclick.
+(function() {
+  var _touchStartY = 0;
+  var _touchStartX = 0;
+  var _touchMoved  = false;
+
+  document.addEventListener('touchstart', function(e) {
+    var t = e.touches[0];
+    _touchStartY = t.clientY;
+    _touchStartX = t.clientX;
+    _touchMoved  = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e) {
+    var t = e.touches[0];
+    var dy = Math.abs(t.clientY - _touchStartY);
+    var dx = Math.abs(t.clientX - _touchStartX);
+    if (dy > 8 || dx > 8) _touchMoved = true;
+  }, { passive: true });
+
+  // Intercepta clicks que vêm após um scroll — cancela antes que cheguem às options
+  document.addEventListener('click', function(e) {
+    if (_touchMoved) {
+      e.stopPropagation();
+      e.preventDefault();
+      _touchMoved = false;
+    }
+  }, true); // capture phase — antes dos onclick inline
 })();
 </script>
 
