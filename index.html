@@ -1192,7 +1192,8 @@
     }
 
     .cracha-top {
-      padding: 18px 20px 0;
+      background: var(--wine);
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -1327,6 +1328,7 @@
     .result-col-right #box-avaliacao-ia         { order: 6; }
     .result-col-right #box-idade-pele           { order: 7; }
     .result-col-right #box-protocolo-completo   { order: 8; }
+    .result-col-right #result-cta-box           { order: 9; }
     .result-col-right #box-dicas-inteligentes-mobile { order: 10; }
   }
 
@@ -4130,7 +4132,7 @@
       <!-- ── COLUNA DIREITA ── -->
       <div class="result-col-right">
 
-        <div class="result-badge">✦ Protocolo</div>
+        <div class="result-badge" id="result-protocolo-badge">✦ Protocolo</div>
         <h2 class="result-name" id="resultTitle" style="position:relative;">
           <span id="result-title-placeholder" style="display:block; visibility:hidden; pointer-events:none;" aria-hidden="true">Seu perfil de pele é <em>mista com tendência oleosa</em>.</span>
           <span id="result-title-typed" style="display:none; position:absolute; top:0; left:0; width:100%;"></span>
@@ -4246,6 +4248,14 @@
           </div>
         </div>
 
+        <!-- CTA — col-right, abaixo do protocolo completo -->
+        <div class="result-cta" id="result-cta-box">
+          <h3>Assine e veja sua pele <em>evoluir<span style="color:var(--ivory);"></span></em> a cada dia.</h3>
+          <p style="max-width:450px;margin-left:auto;margin-right:auto;">Receba os cuidados de uma assistente virtual capaz de ajustar seu protocolo de acordo com suas necessidades.</p>
+          <a href="#" class="btn-primary-full">Assinar agora</a>
+          <p class="cta-note">🔓 7 dias grátis · Cancele quando quiser</p>
+        </div>
+
         <!-- Dicas inteligentes — mobile only (na col-left em desktop) -->
         <div class="result-section result-section-mobile-only" id="box-dicas-inteligentes-mobile" style="background:var(--ink); border-radius:22px; padding:28px 26px; position:relative; overflow:hidden; margin-top: 6px; box-shadow:0 8px 32px rgba(74,127,165,0.22), inset 0 1px 0 rgba(255,255,255,0.07);">
           <!-- glow wine topo -->
@@ -4263,13 +4273,6 @@
     <!-- ── ABAIXO DAS COLUNAS: 1 coluna full-width ── -->
 
     <!-- BOX: Combinam com você — movido para col-left -->
-
-    <div class="result-cta result-below-cols">
-      <h3>Assine e veja sua pele <em>evoluir<span style="color:var(--ivory);"></span></em> a cada dia.</h3>
-      <p style="max-width:450px;margin-left:auto;margin-right:auto;">Receba os cuidados de uma assistente virtual capaz de ajustar seu protocolo de acordo com suas necessidades.</p>
-      <a href="#" class="btn-primary-full">Assinar agora</a>
-      <p class="cta-note">🔓 7 dias grátis · Cancele quando quiser</p>
-    </div>
   </div>
 </div>
 
@@ -5428,9 +5431,9 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
 
     // Defs: gradiente radial para o preenchimento (steel nas bordas, wine no centro)
     svgHtml += `<defs>
-      <radialGradient id="radar-fill-grad" cx="50%" cy="50%" r="50%">
-        <stop offset="0%"   stop-color="#A85568" stop-opacity="0.28"/>
-        <stop offset="100%" stop-color="#4A7FA5" stop-opacity="0.18"/>
+      <radialGradient id="radar-fill-grad" cx="${cx}" cy="${cy}" r="${maxR}" gradientUnits="userSpaceOnUse">
+        <stop offset="0%"   stop-color="#A85568" stop-opacity="0.30"/>
+        <stop offset="100%" stop-color="#4A7FA5" stop-opacity="0.15"/>
       </radialGradient>
     </defs>`;
 
@@ -6346,7 +6349,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
     // Reseta estado de entrada
     const resultName  = document.getElementById('resultTitle');
     const resultSub   = document.getElementById('resultSubtitle');
-    const resultBadge = document.querySelector('#screen-result .result-badge');
+    const resultBadge = document.getElementById('result-protocolo-badge');
     if (resultName) { resultName.style.opacity = '0'; resultName.style.transition = ''; }
     if (resultSub)  { resultSub.style.visibility = 'hidden'; resultSub.style.opacity = '0'; }
     if (resultBadge) { resultBadge.classList.remove('badge-visible'); }
