@@ -4880,7 +4880,7 @@
     const next = document.getElementById('screen-' + n);
     if (!next) return;
     const selector = '.option, .input-wrap, #city-box, .interblock-step, .photo-slot';
-    next.querySelectorAll(selector).forEach(el => { el.style.opacity = '0'; el.style.transition = ''; });
+    next.querySelectorAll(selector).forEach(el => { el.style.opacity = '0'; el.style.transition = ''; el.style.pointerEvents = 'none'; });
     const tipWrap = next.querySelector('#photo-tip-wrap, #scanner-tip-wrap');
     if (tipWrap) {
       if (n === 24) {
@@ -4997,7 +4997,7 @@
         const sel = next.classList.contains('interblock')
           ? '.option, .input-wrap, #city-box, .photo-slot'
           : '.option, .input-wrap, #city-box, .interblock-step, .photo-slot';
-        next.querySelectorAll(sel).forEach(el => { el.style.opacity = '0'; el.style.transition = ''; });
+        next.querySelectorAll(sel).forEach(el => { el.style.opacity = '0'; el.style.transition = ''; el.style.pointerEvents = 'none'; });
       }
       const tipWrap = next.querySelector('#photo-tip-wrap, #scanner-tip-wrap');
       if (tipWrap) {
@@ -8182,7 +8182,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       // backward (voltar): entra de cima para baixo (-Y → 0)
       const fromY   = (forward !== false ? 1 : -1) * VH * 0.55;
 
-      targets.forEach(el => { el.style.opacity = '0'; el.style.transition = ''; });
+      targets.forEach(el => { el.style.opacity = '0'; el.style.transition = ''; el.style.pointerEvents = 'none'; });
       void activeScreen.offsetHeight;
 
       const now = performance.now();
@@ -8198,6 +8198,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
         setTimeout(() => {
           el.style.transition = `opacity ${ENTRY_D}ms cubic-bezier(0.4,0,0.2,1)`;
           el.style.opacity    = '1';
+          el.style.pointerEvents = '';
           setTimeout(() => { el.style.transition = ''; }, ENTRY_D + 16);
         }, i * STAGGER);
         return p;
