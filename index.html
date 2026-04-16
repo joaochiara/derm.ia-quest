@@ -1200,38 +1200,13 @@
       gap: 8px;
       position: relative;
     }
-    .cracha-clip {
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 36px;
-      height: 16px;
-      background: var(--wine-dark);
-      border-radius: 6px 6px 0 0;
-      border: 1.5px solid rgba(255,255,255,0.15);
-      border-bottom: none;
-    }
-    .cracha-clip::after {
-      content: '';
-      position: absolute;
-      bottom: -6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 14px;
-      height: 14px;
-      background: var(--wine-dark);
-      border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.20);
-    }
     .cracha-label {
       font-family: var(--sans);
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 500;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: rgba(253,250,247,0.80);
-      margin-top: 4px;
     }
 
     .cracha-photo-wrap {
@@ -1265,11 +1240,12 @@
     }
     .cracha-name {
       font-family: var(--serif);
-      font-size: 22px;
+      font-size: clamp(28px, 4vw, 42px);
       font-weight: 700;
       color: var(--ink);
       letter-spacing: -0.02em;
       margin-bottom: 12px;
+      line-height: 1.1;
       filter: drop-shadow(0 1px 4px rgba(24,16,14,0.08));
     }
     .cracha-divider {
@@ -1289,7 +1265,7 @@
       gap: 8px;
     }
     .cracha-field-label {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.08em;
@@ -1297,7 +1273,7 @@
       flex-shrink: 0;
     }
     .cracha-field-val {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--ink-soft);
       text-align: right;
@@ -4066,8 +4042,7 @@
           <div id="result-cracha">
             <!-- Topo decorativo do crachá -->
             <div class="cracha-top">
-              <div class="cracha-clip"></div>
-              <span class="cracha-label">derm.ia · protocolo</span>
+              <span class="cracha-label">derm.ia · PACIENTE</span>
             </div>
             <!-- Foto -->
             <div class="cracha-photo-wrap">
@@ -5438,18 +5413,41 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
   window._renderRadar = function(scores) {
     const labels = ['Hidratação','Brilho','Firmeza','Textura','Oleosidade','Sensibilidade','Rugas','Manchas'];
     const n = 8;
-    const VB = 420;           // viewBox square size
+    const VB = 420;
     const cx = VB / 2, cy = VB / 2, maxR = 140;
-    const PILL_DIST = maxR + 36; // distância do centro ao centro de cada pílula
+    const PILL_DIST = maxR + 36;
 
     function polar(angle, rad) {
       return [cx + rad * Math.sin(angle), cy - rad * Math.cos(angle)];
     }
 
-    // ── SVG: só gráfico, sem labels ──
+    // Cor dos dots
+    const invertedLabels = ['Oleosidade','Sensibilidade','Rugas','Manchas'];
+    const dotColors = scores.map((s, i) => {
+      const isInverted = invertedLabels.includes(labels[i]);
+      if (isInverted) return s < 50 ? '#4A7FA5' : '#A85568';
+      else            return s < 50 ? '#A85568' : '#4A7FA5';
+    });
+
+    // Pré-calcula posições dos dots e pills
+    const dotPts  = scores.map((s, i) => polar(2 * Math.PI * i / n, maxR * s / 100));
+    const pillPts = scores.map((_, i) => polar(2 * Math.PI * i / n, PILL_DIST));
+
     let svgHtml = '';
 
-    // Fundo marfim — octógono externo
+    // Defs: gradiente radial para o preenchimento (steel nas bordas, wine no centro)
+    svgHtml += `<defs>
+      <radialGradient id="radar-fill-grad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"   stop-color="#A85568" stop-opacity="0.28"/>
+        <stop offset="100%" stop-color="#4A7FA5" stop-opacity="0.18"/>
+      </radialGradient>
+      <radialGradient id="radar-stroke-grad" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"   stop-color="#A85568" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#4A7FA5" stop-opacity="0.70"/>
+      </radialGradient>
+    </defs>`;
+
+    // Fundo octógono
     let bgPts = [];
     for (let i = 0; i < n; i++) bgPts.push(polar(2 * Math.PI * i / n, maxR));
     svgHtml += `<polygon points="${bgPts.map(p=>p.join(',')).join(' ')}" fill="#F7F2EA"/>`;
@@ -5468,19 +5466,37 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       svgHtml += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(168,85,104,0.18)" stroke-width="1"/>`;
     }
 
-    // Polígono de dados
+    // Polígono de dados — começa do centro, anima depois
     const dataFull = scores.map((s, i) => polar(2 * Math.PI * i / n, maxR * s / 100));
     const dataZero = scores.map((_, i) => polar(2 * Math.PI * i / n, 0));
-    svgHtml += `<polygon id="radar-data-poly" points="${dataZero.map(p=>p.join(',')).join(' ')}"
-      fill="rgba(168,85,104,0.22)" stroke="rgba(168,85,104,0.75)" stroke-width="2" stroke-linejoin="round"/>`;
+    svgHtml += `<polygon id="radar-data-poly"
+      points="${dataZero.map(p=>p.join(',')).join(' ')}"
+      fill="url(#radar-fill-grad)"
+      stroke="url(#radar-stroke-grad)"
+      stroke-width="2"
+      stroke-linejoin="round"/>`;
 
-    // Cor dos dots: mesma lógica das barras de score
-    // invertidos → abaixo de 50% é steel, acima é wine; normais → inverso
-    const invertedLabels = ['Oleosidade','Sensibilidade','Rugas','Manchas'];
-    const dotColors = scores.map((s, i) => {
-      const isInverted = invertedLabels.includes(labels[i]);
-      if (isInverted) return s < 50 ? 'var(--steel)' : 'var(--wine)';
-      else            return s < 50 ? 'var(--wine)'  : 'var(--steel)';
+    // Linhas conectoras (pill → dot) — começam no ponto central, animam depois
+    scores.forEach((s, i) => {
+      const angle  = 2 * Math.PI * i / n;
+      const sinA   = Math.sin(angle);
+      const [px, py] = pillPts[i];
+      const [dx, dy] = dotPts[i];
+      // Ponto de âncora na pílula (lado mais próximo do gráfico)
+      const anchorX = px + (cx - px) * 0.28;
+      const anchorY = py + (cy - py) * 0.28;
+      // Controle da curva orgânica: perpendicular leve ao eixo
+      const perpX = -(py - cy) * 0.18;
+      const perpY =  (px - cx) * 0.18;
+      const cpX = (anchorX + cx) / 2 + perpX;
+      const cpY = (anchorY + cy) / 2 + perpY;
+      svgHtml += `<path class="radar-connector" data-idx="${i}"
+        d="M ${anchorX.toFixed(1)} ${anchorY.toFixed(1)} Q ${cpX.toFixed(1)} ${cpY.toFixed(1)} ${cx} ${cy}"
+        fill="none"
+        stroke="${dotColors[i]}"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        opacity="0.55"/>`;
     });
 
     // Pontos nos vértices — cor individual
@@ -5497,24 +5513,18 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       if (!overlayEl) return;
       overlayEl.innerHTML = '';
 
-      // Converte coordenada do viewBox para % relativo ao container
-      // O SVG é width:100% com viewBox quadrado, então escala uniforme
       labels.forEach((lbl, i) => {
         const angle = 2 * Math.PI * i / n;
         const sinA = Math.sin(angle);
-        // Ponto central da pílula em coordenadas do viewBox
         const [lx, ly] = polar(angle, PILL_DIST);
 
-        // Converte para % do container (viewBox é VB×VB)
         const pctX = (lx / VB) * 100;
         const pctY = (ly / VB) * 100;
 
-        // Alinhamento: transform para centralizar a pílula no ponto
-        // Lado direito: ancoramos à esquerda; lado esquerdo: à direita; centro: centraliza
         let translateX;
-        if (sinA > 0.3)       translateX = '0%';        // direita: pill começa no ponto
-        else if (sinA < -0.3) translateX = '-100%';     // esquerda: pill termina no ponto
-        else                  translateX = '-50%';       // topo/base: centralizado
+        if (sinA > 0.3)       translateX = '0%';
+        else if (sinA < -0.3) translateX = '-100%';
+        else                  translateX = '-50%';
 
         const pill = document.createElement('div');
         pill.className = 'radar-label-pill';
@@ -5538,13 +5548,14 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
     setupRadar(svg, overlay);
     setupRadar(svgMobile, overlayM);
 
-    // Anima do centro para os valores reais — opera em cada SVG individualmente
+    // Anima dots, polígono E conectores
     const startTime = performance.now();
     const duration = 900;
 
     function animSvg(svgEl, now) {
       const t = Math.min((now - startTime) / duration, 1);
       const ease = 1 - Math.pow(1 - t, 3);
+
       const poly = svgEl.querySelector('#radar-data-poly');
       if (poly) {
         const pts = dataFull.map((fp, i) => {
@@ -5553,6 +5564,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
         });
         poly.setAttribute('points', pts.map(p=>p.join(',')).join(' '));
       }
+
       svgEl.querySelectorAll('.radar-dot').forEach((dot, i) => {
         if (!dataFull[i]) return;
         const [fx, fy] = dataFull[i];
@@ -5560,6 +5572,25 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
         dot.setAttribute('cy', (cy + (fy-cy) * ease).toFixed(2));
         dot.setAttribute('opacity', ease.toFixed(2));
       });
+
+      // Anima conectores: o endpoint Q cresce do centro ao dot real
+      svgEl.querySelectorAll('.radar-connector').forEach((path, i) => {
+        if (!dataFull[i]) return;
+        const angle   = 2 * Math.PI * i / n;
+        const [px, py] = pillPts[i];
+        const [fx, fy] = dataFull[i];
+        const curDotX = (cx + (fx - cx) * ease);
+        const curDotY = (cy + (fy - cy) * ease);
+        const anchorX = px + (cx - px) * 0.28;
+        const anchorY = py + (cy - py) * 0.28;
+        const perpX = -(py - cy) * 0.18;
+        const perpY =  (px - cx) * 0.18;
+        const cpX = (anchorX + curDotX) / 2 + perpX * ease;
+        const cpY = (anchorY + curDotY) / 2 + perpY * ease;
+        path.setAttribute('d', `M ${anchorX.toFixed(1)} ${anchorY.toFixed(1)} Q ${cpX.toFixed(1)} ${cpY.toFixed(1)} ${curDotX.toFixed(1)} ${curDotY.toFixed(1)}`);
+        path.setAttribute('opacity', (0.55 * ease).toFixed(2));
+      });
+
       if (t < 1) requestAnimationFrame(now2 => animSvg(svgEl, now2));
     }
 
@@ -5694,10 +5725,11 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       if (craCidade)   craCidade.textContent    = _cidade;
       if (craTipo)     craTipo.textContent      = tipoMap[_tipo] || _tipo;
       if (craAlergia && crachaAlergiaRow) {
-        if (_alergia && _alergia !== 'nenhuma' && _alergia !== 'Nenhuma') {
+        const alergiaLower = (_alergia || '').toLowerCase().trim();
+        if (_alergia && alergiaLower !== 'nenhuma' && alergiaLower !== 'nao' && alergiaLower !== 'não' && alergiaLower !== '') {
           craAlergia.textContent = _alergia;
         } else {
-          crachaAlergiaRow.style.display = 'none';
+          craAlergia.textContent = 'Nenhuma';
         }
       }
     })();
