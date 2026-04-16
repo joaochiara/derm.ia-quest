@@ -4033,7 +4033,7 @@
           <div id="result-cracha">
             <!-- Topo decorativo do crachá -->
             <div class="cracha-top">
-              <div class="result-badge badge-visible" style="margin-bottom:0; opacity:1; transform:none; transition:none;">⛶ PACIENTE</div>
+              <div class="result-badge badge-visible" style="margin-bottom:0; opacity:1; transform:none; transition:none;">✦ PACIENTE</div>
             </div>
             <!-- Foto -->
             <div class="cracha-photo-wrap">
@@ -4132,7 +4132,7 @@
       <!-- ── COLUNA DIREITA ── -->
       <div class="result-col-right">
 
-        <div class="result-badge" id="result-protocolo-badge">✦ Protocolo</div>
+        <div class="result-badge" id="result-protocolo-badge">⛶ Protocolo</div>
         <h2 class="result-name" id="resultTitle" style="position:relative;">
           <span id="result-title-placeholder" style="display:block; visibility:hidden; pointer-events:none;" aria-hidden="true">Seu perfil de pele é <em>mista com tendência oleosa</em>.</span>
           <span id="result-title-typed" style="display:none; position:absolute; top:0; left:0; width:100%;"></span>
@@ -5429,14 +5429,6 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
 
     let svgHtml = '';
 
-    // Defs: gradiente radial para o preenchimento (steel nas bordas, wine no centro)
-    svgHtml += `<defs>
-      <radialGradient id="radar-fill-grad" cx="${cx}" cy="${cy}" r="${maxR}" gradientUnits="userSpaceOnUse">
-        <stop offset="0%"   stop-color="#A85568" stop-opacity="0.30"/>
-        <stop offset="100%" stop-color="#4A7FA5" stop-opacity="0.15"/>
-      </radialGradient>
-    </defs>`;
-
     // Fundo octógono
     let bgPts = [];
     for (let i = 0; i < n; i++) bgPts.push(polar(2 * Math.PI * i / n, maxR));
@@ -5456,12 +5448,12 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       svgHtml += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(168,85,104,0.18)" stroke-width="1"/>`;
     }
 
-    // Polígono de dados — fill gradient + stroke sólido wine, começa do centro, anima depois
+    // Polígono de dados — fill sólido translúcido wine + stroke sólido wine
     const dataFull = scores.map((s, i) => polar(2 * Math.PI * i / n, maxR * s / 100));
     const dataZero = scores.map((_, i) => polar(2 * Math.PI * i / n, 0));
     svgHtml += `<polygon id="radar-data-poly"
       points="${dataZero.map(p=>p.join(',')).join(' ')}"
-      fill="url(#radar-fill-grad)"
+      fill="rgba(168,85,104,0.22)"
       stroke="rgba(168,85,104,0.75)"
       stroke-width="2"
       stroke-linejoin="round"/>`;
