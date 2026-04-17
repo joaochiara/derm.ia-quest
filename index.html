@@ -5193,8 +5193,9 @@
   window._lastGoToTime = 0;
 
   function selectOption(el, gid, val) {
-    if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
     const _dt = Date.now() - window._lastGoToTime;
+    alert('selectOption gid='+gid+' val='+(val||'?')+' dt='+_dt+'ms screen='+current+'\n_transitioning='+window._transitioning_debug+'\n_blocked='+window._blocked_debug);
+    if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
     console.log('[SELECT] selectOption gid='+gid+' val='+(val||'?')+' dt='+_dt+'ms screen='+current);
     if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById(gid).querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -10298,8 +10299,12 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
   // Exposto para goTo() bloquear durante transições
   window._blockOptionClicks = function(ms) {
     _transitioning = true;
+    window._transitioning_debug = true;
     clearTimeout(_transTimer);
-    _transTimer = setTimeout(function() { _transitioning = false; }, ms || 700);
+    _transTimer = setTimeout(function() {
+      _transitioning = false;
+      window._transitioning_debug = false;
+    }, ms || 700);
     // Também descarta qualquer toque pendente
     _pendingEl = null;
   };
