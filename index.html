@@ -4588,6 +4588,15 @@
     window._lastGoToTime = Date.now();
     console.log('[GOTO] n='+n+' from='+current+' t='+window._lastGoToTime);
     if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
+    // Remove classe 'selected' de todas as options da screen atual antes de sair.
+    // Isso evita que o estilo visual de seleção apareça na próxima screen durante
+    // a animação de sobreposição — causa raiz do "ghost click visual" no mobile.
+    const _curScreen = document.querySelector('.screen.active');
+    if (_curScreen) {
+      _curScreen.querySelectorAll('.option.selected').forEach(function(o) {
+        o.classList.remove('selected');
+      });
+    }
     // Bloqueia pointer-events em todo o quiz durante a transição
     // para evitar ghost clicks no mobile (touchend → click sintético ~300ms depois)
     const _qw = document.querySelector('.quiz-wrap');
@@ -5102,9 +5111,8 @@
   }
 
   function selectRotinaOption(el, val) {
-    const _dt = Date.now() - window._lastGoToTime;
-    alert('selectRotinaOption val='+val+' dt='+_dt+'ms screen='+current+'\n_transitioning='+window._transitioning_debug);
     if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
+    const _dt = Date.now() - window._lastGoToTime;
     console.log('[SELECT] selectRotinaOption val='+val+' dt='+_dt+'ms screen='+current);
     if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     // Seleciona visualmente
@@ -5145,9 +5153,8 @@
   }
 
   function selectMaquiagemOption(el, val) {
-    const _dt = Date.now() - window._lastGoToTime;
-    alert('selectMaquiagemOption val='+val+' dt='+_dt+'ms screen='+current+'\n_transitioning='+window._transitioning_debug);
     if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
+    const _dt = Date.now() - window._lastGoToTime;
     console.log('[SELECT] selectMaquiagemOption val='+val+' dt='+_dt+'ms screen='+current);
     if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById('q_maquiagem').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -5161,9 +5168,8 @@
   }
 
   function selectAlergiaOption(el, val) {
-    const _dt = Date.now() - window._lastGoToTime;
-    alert('selectAlergiaOption val='+val+' dt='+_dt+'ms screen='+current+'\n_transitioning='+window._transitioning_debug);
     if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
+    const _dt = Date.now() - window._lastGoToTime;
     console.log('[SELECT] selectAlergiaOption val='+val+' dt='+_dt+'ms screen='+current);
     if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById('q_alergia').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -5177,9 +5183,8 @@
   }
 
   function selectReceitaOption(el, val) {
-    const _dt = Date.now() - window._lastGoToTime;
-    alert('selectReceitaOption val='+val+' dt='+_dt+'ms screen='+current+'\n_transitioning='+window._transitioning_debug);
     if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
+    const _dt = Date.now() - window._lastGoToTime;
     console.log('[SELECT] selectReceitaOption val='+val+' dt='+_dt+'ms screen='+current);
     if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById('q_receita').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -5197,12 +5202,8 @@
   window._lastGoToTime = 0;
 
   function selectOption(el, gid, val) {
-    const _dt = Date.now() - window._lastGoToTime;
-    // Debug: verifica se o onclick ainda existe no elemento (não deveria após stripOnclicks)
-    const hasOnclick = !!el.getAttribute('onclick');
-    const hasHandler = !!el._optionHandler;
-    alert('selectOption gid='+gid+' val='+(val||'?')+' dt='+_dt+'ms screen='+current+'\nonclick attr='+hasOnclick+' _optionHandler='+hasHandler+'\n_transitioning='+window._transitioning_debug);
     if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
+    const _dt = Date.now() - window._lastGoToTime;
     console.log('[SELECT] selectOption gid='+gid+' val='+(val||'?')+' dt='+_dt+'ms screen='+current);
     if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById(gid).querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -5262,9 +5263,8 @@
   }
 
   function toggleMulti(el, gid, excl) {
-    const _dt = Date.now() - window._lastGoToTime;
-    alert('toggleMulti gid='+gid+' dt='+_dt+'ms screen='+current+'\n_transitioning='+window._transitioning_debug);
     if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
+    const _dt = Date.now() - window._lastGoToTime;
     console.log('[SELECT] toggleMulti gid='+gid+' dt='+_dt+'ms screen='+current);
     if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     const parent = document.getElementById(gid);
@@ -10287,158 +10287,51 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
   }, true); // capture phase — antes dos onclick inline
 })();
 
-// ── OPTION INTERACTION ENGINE — substitui todos os onclick inline das .option ──
-// Estratégia definitiva contra ghost clicks:
-//   1. Remove os onclick inline das .option no DOMContentLoaded
-//   2. Usa touchstart como evento primário (não existe ghost touchstart)
-//   3. Chama preventDefault() no touchstart para suprimir o click sintético
-//   4. Guard de movimento: cancela se o dedo arrastou > 8px (scroll)
-//   5. Guard de transição: ignora toques por 700ms após goTo()
-//   6. Em desktop (sem touch), usa click normalmente
+// ── GHOST CLICK BLOCKER ──────────────────────────────────────────────────────
+// Bloqueia clicks/taps em .option durante e após transições de screen.
+// Usa capture phase no document — intercepta ANTES de qualquer onclick inline,
+// independente de pointer-events, touch-action ou estrutura do DOM.
 (function() {
+  var _blocked = false;
+  var _blockTimer = null;
 
-  // ── Estado ────────────────────────────────────────────────────────────────
-  var _touchStartX = 0, _touchStartY = 0;
-  var _touchMoved  = false;
-  var _pendingEl   = null;   // elemento .option com touchstart ativo
-  var _transitioning = false;
-  var _transTimer    = null;
-
-  // Exposto para goTo() bloquear durante transições
+  // Expõe função para o goTo ativar o bloqueio
   window._blockOptionClicks = function(ms) {
-    _transitioning = true;
-    window._transitioning_debug = true;
-    clearTimeout(_transTimer);
-    _transTimer = setTimeout(function() {
-      _transitioning = false;
-      window._transitioning_debug = false;
-    }, ms || 700);
-    // Também descarta qualquer toque pendente
-    _pendingEl = null;
+    _blocked = true;
+    clearTimeout(_blockTimer);
+    _blockTimer = setTimeout(function() { _blocked = false; }, ms || 600);
   };
 
-  // ── Extrai o handler original do onclick inline e o remove do elemento ───
-  // Feito uma única vez após o DOM estar pronto, para que os handlers
-  // não possam ser chamados diretamente pelo browser via click sintético.
-  function stripOnclicks() {
-    document.querySelectorAll('.option[onclick]').forEach(function(el) {
-      // Salva o handler como função no elemento para chamada posterior
-      var fn = el.onclick;  // o browser já compilou o onclick string → Function
-      el._optionHandler = fn;
-      el.removeAttribute('onclick');
-      el.onclick = null;
-    });
-  }
-
-  // ── Sobe na árvore DOM procurando .option com handler ────────────────────
-  function findOption(target) {
-    var el = target;
-    for (var i = 0; i < 6; i++) {
-      if (!el) return null;
-      if (el.classList && el.classList.contains('option') && el._optionHandler) return el;
-      el = el.parentElement;
-    }
-    return null;
-  }
-
-  // ── Despacha a ação da option ─────────────────────────────────────────────
-  function fireOption(optEl) {
-    if (!optEl || !optEl._optionHandler) return;
-    // Guard: durante transição de tela, ignora
-    if (_transitioning) return;
-    // Guard: pointer-events none (set pelo goTo) — verifica no elemento e pais
-    var el = optEl;
+  // Captura phase: roda antes de qualquer onclick inline
+  document.addEventListener('click', function(e) {
+    if (!_blocked) return;
+    var el = e.target;
+    // Sobe na árvore até 4 níveis procurando .option
     for (var i = 0; i < 4; i++) {
       if (!el) break;
-      if (window.getComputedStyle(el).pointerEvents === 'none') return;
+      if (el.classList && el.classList.contains('option')) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        return;
+      }
       el = el.parentElement;
     }
-    optEl._optionHandler.call(optEl, { target: optEl, currentTarget: optEl });
-  }
+  }, true); // true = capture phase
 
-  // ── Listeners de touch ────────────────────────────────────────────────────
-  document.addEventListener('touchstart', function(e) {
-    _touchMoved = false;
-    var t = e.touches[0];
-    _touchStartX = t.clientX;
-    _touchStartY = t.clientY;
-
-    var opt = findOption(t.target || document.elementFromPoint(t.clientX, t.clientY));
-    _pendingEl = opt || null;
-
-    // Previne o click sintético que o browser geraria ~300ms depois
-    // Só faz isso em elements interativos (option), para não quebrar scroll e outros
-    if (_pendingEl) {
-      e.preventDefault();
-    }
-  }, { passive: false, capture: true });
-
-  document.addEventListener('touchmove', function(e) {
-    var t = e.touches[0];
-    if (Math.abs(t.clientX - _touchStartX) > 8 || Math.abs(t.clientY - _touchStartY) > 8) {
-      _touchMoved = true;
-      _pendingEl  = null;
-    }
-  }, { passive: true, capture: true });
-
+  // Também bloqueia touchend direto nas options (iOS Safari bypassa click às vezes)
   document.addEventListener('touchend', function(e) {
-    if (_touchMoved || !_pendingEl) { _pendingEl = null; return; }
-    var opt = _pendingEl;
-    _pendingEl = null;
-    fireOption(opt);
-  }, { passive: true, capture: true });
-
-  // ── Fallback para desktop (mouse/trackpad) ─────────────────────────────────
-  // Em dispositivos sem touch, os onclick foram removidos — restaura via click.
-  document.addEventListener('click', function(e) {
-    // Se é dispositivo touch real, bloqueia o click sintético sempre
-    if (navigator.maxTouchPoints > 0) {
-      var opt = findOption(e.target);
-      if (opt) { e.preventDefault(); e.stopImmediatePropagation(); }
-      return;
-    }
-    // Desktop: dispara normalmente
-    var opt = findOption(e.target);
-    if (opt) fireOption(opt);
-  }, true);
-
-  // ── Strip onclicks após DOM pronto ─────────────────────────────────────────
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', stripOnclicks);
-  } else {
-    stripOnclicks();
-  }
-
-  // Reaplica strip se novas options forem inseridas dinamicamente
-  window._stripOptionOnclicks = stripOnclicks;
-
-})();
-
-// ── DEBUG: MutationObserver que detecta quando .selected é adicionado a .option ──
-(function() {
-  var obs = new MutationObserver(function(mutations) {
-    mutations.forEach(function(m) {
-      if (m.type !== 'attributes' || m.attributeName !== 'class') return;
-      var el = m.target;
-      if (!el.classList.contains('option')) return;
-      var hadSelected = (m.oldValue || '').includes('selected');
-      var hasSelected = el.classList.contains('selected');
-      if (!hadSelected && hasSelected) {
-        // Uma opção acabou de receber a classe 'selected'
-        var screen = el.closest('.screen');
-        var screenId = screen ? screen.id : 'fora-de-screen';
-        var isActive = screen ? screen.classList.contains('active') : false;
-        var stack = '';
-        try { throw new Error('stack'); } catch(e) { stack = e.stack ? e.stack.split('\n').slice(1,4).join(' | ') : ''; }
-        alert('SELECTED adicionado!\nscreen: '+screenId+' (active='+isActive+')\nopção: '+(el.querySelector('.opt-label')||el).textContent.trim().slice(0,30)+'\ncallstack: '+stack);
+    if (!_blocked) return;
+    var el = e.target;
+    for (var i = 0; i < 4; i++) {
+      if (!el) break;
+      if (el.classList && el.classList.contains('option')) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        return;
       }
-    });
-  });
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.option').forEach(function(el) {
-      obs.observe(el, { attributes: true, attributeOldValue: true });
-    });
-  });
+      el = el.parentElement;
+    }
+  }, true);
 })();
 </script>
 
