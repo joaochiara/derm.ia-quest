@@ -4588,6 +4588,11 @@
     window._lastGoToTime = Date.now();
     console.log('[GOTO] n='+n+' from='+current+' t='+window._lastGoToTime);
     if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
+    // Invalida todos os tokens de touchstart para impedir ghost clicks nas options
+    // da próxima screen (o ghost chega ~300ms depois, mas sem touchstart próprio)
+    document.querySelectorAll('.option[data-ts-at]').forEach(function(o) {
+      o.removeAttribute('data-ts-at');
+    });
     // Bloqueia pointer-events em todo o quiz durante a transição
     // para evitar ghost clicks no mobile (touchend → click sintético ~300ms depois)
     const _qw = document.querySelector('.quiz-wrap');
@@ -10278,51 +10283,90 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
   }, true); // capture phase — antes dos onclick inline
 })();
 
-// ── GHOST CLICK BLOCKER ──────────────────────────────────────────────────────
-// Bloqueia clicks/taps em .option durante e após transições de screen.
-// Usa capture phase no document — intercepta ANTES de qualquer onclick inline,
-// independente de pointer-events, touch-action ou estrutura do DOM.
+// ── GHOST CLICK BLOCKER v2 — touchstart pairing ──────────────────────────────
+// Estratégia: um .option só é interagível se tiver recebido seu próprio
+// touchstart há menos de PAIR_WINDOW ms. Ghost clicks nunca têm touchstart
+// precedente — chegam como click/touchend sintético sem par real.
+//
+// Adicionalmente mantém o bloqueio global por timestamp de goTo como
+// segunda barreira independente.
 (function() {
+
+  var PAIR_WINDOW = 700; // ms máximo entre touchstart e click/touchend válidos
+
+  // ── Barreira 1: touchstart pairing ───────────────────────────────────────
+  // Cada elemento recebe um atributo data-ts-at com o timestamp do último
+  // touchstart real que tocou nele (ou em descendente seu).
+  document.addEventListener('touchstart', function(e) {
+    var el = e.touches[0] ? document.elementFromPoint(
+      e.touches[0].clientX, e.touches[0].clientY
+    ) : e.target;
+    // Sobe até 6 níveis procurando .option e carimba todos no caminho
+    for (var i = 0; i < 6; i++) {
+      if (!el) break;
+      if (el.classList && el.classList.contains('option')) {
+        el.setAttribute('data-ts-at', Date.now());
+      }
+      el = el.parentElement;
+    }
+  }, { passive: true, capture: true });
+
+  // Verifica se o elemento alvo tem par de touchstart recente
+  function hasFreshTouch(target) {
+    var el = target;
+    for (var i = 0; i < 6; i++) {
+      if (!el) break;
+      if (el.classList && el.classList.contains('option')) {
+        var ts = parseInt(el.getAttribute('data-ts-at') || '0', 10);
+        return (Date.now() - ts) < PAIR_WINDOW;
+      }
+      el = el.parentElement;
+    }
+    return true; // sem .option no caminho → não bloquear (desktop etc.)
+  }
+
+  // ── Barreira 2: bloqueio global por goTo (mantido como fallback) ─────────
   var _blocked = false;
   var _blockTimer = null;
 
-  // Expõe função para o goTo ativar o bloqueio
   window._blockOptionClicks = function(ms) {
     _blocked = true;
     clearTimeout(_blockTimer);
-    _blockTimer = setTimeout(function() { _blocked = false; }, ms || 600);
+    _blockTimer = setTimeout(function() { _blocked = false; }, ms || 700);
   };
 
-  // Captura phase: roda antes de qualquer onclick inline
-  document.addEventListener('click', function(e) {
-    if (!_blocked) return;
+  // ── Interceptador unificado (capture phase) ───────────────────────────────
+  function interceptEvent(e) {
+    // Determina se o alvo é (ou está dentro de) um .option
     var el = e.target;
-    // Sobe na árvore até 4 níveis procurando .option
-    for (var i = 0; i < 4; i++) {
+    var isOption = false;
+    for (var i = 0; i < 6; i++) {
       if (!el) break;
-      if (el.classList && el.classList.contains('option')) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        return;
-      }
+      if (el.classList && el.classList.contains('option')) { isOption = true; break; }
       el = el.parentElement;
     }
-  }, true); // true = capture phase
+    if (!isOption) return; // não é option — não interferir
 
-  // Também bloqueia touchend direto nas options (iOS Safari bypassa click às vezes)
-  document.addEventListener('touchend', function(e) {
-    if (!_blocked) return;
-    var el = e.target;
-    for (var i = 0; i < 4; i++) {
-      if (!el) break;
-      if (el.classList && el.classList.contains('option')) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        return;
-      }
-      el = el.parentElement;
+    // Barreira 2: bloqueio global
+    if (_blocked) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      return;
     }
-  }, true);
+
+    // Barreira 1: touchstart pairing — bloqueia se não houve toque real recente
+    // Só aplica em eventos sintéticos (isTrusted=false) ou quando é dispositivo touch
+    // (navigator.maxTouchPoints > 0). Em desktop com mouse, hasFreshTouch retorna true.
+    if (navigator.maxTouchPoints > 0 && !hasFreshTouch(e.target)) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      return;
+    }
+  }
+
+  document.addEventListener('click',    interceptEvent, true);
+  document.addEventListener('touchend', interceptEvent, true);
+
 })();
 </script>
 
