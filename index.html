@@ -4592,11 +4592,8 @@
   }
 
   function goTo(n) {
-    window._lastGoToTime = Date.now();
-    console.log('[GOTO] n='+n+' from='+current+' t='+window._lastGoToTime);
-    if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
+    console.log('[GOTO] n='+n+' from='+current);
     // Bloqueia pointer-events em todo o quiz durante a transição
-    // para evitar ghost clicks no mobile (touchend → click sintético ~300ms depois)
     const _qw = document.querySelector('.quiz-wrap');
     if (_qw) {
       _qw.style.pointerEvents = 'none';
@@ -5109,11 +5106,6 @@
   }
 
   function selectRotinaOption(el, val) {
-    if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
-    const _dt = Date.now() - window._lastGoToTime;
-    console.log('[SELECT] selectRotinaOption val='+val+' dt='+_dt+'ms screen='+current);
-    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
-    // Seleciona visualmente
     document.getElementById('q_rotina').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers['q_rotina'] = val;
@@ -5151,10 +5143,6 @@
   }
 
   function selectMaquiagemOption(el, val) {
-    if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
-    const _dt = Date.now() - window._lastGoToTime;
-    console.log('[SELECT] selectMaquiagemOption val='+val+' dt='+_dt+'ms screen='+current);
-    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById('q_maquiagem').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers['q_maquiagem'] = val;
@@ -5166,10 +5154,6 @@
   }
 
   function selectAlergiaOption(el, val) {
-    if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
-    const _dt = Date.now() - window._lastGoToTime;
-    console.log('[SELECT] selectAlergiaOption val='+val+' dt='+_dt+'ms screen='+current);
-    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById('q_alergia').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers['q_alergia'] = val;
@@ -5181,10 +5165,6 @@
   }
 
   function selectReceitaOption(el, val) {
-    if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
-    const _dt = Date.now() - window._lastGoToTime;
-    console.log('[SELECT] selectReceitaOption val='+val+' dt='+_dt+'ms screen='+current);
-    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById('q_receita').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers['q_receita'] = val;
@@ -5195,15 +5175,7 @@
     setTimeout(() => goTo(window._receitaNext || 20), 220);
   }
 
-  // Proteção contra ghost click no mobile: registra o momento de cada goTo
-  // e ignora cliques em opções que cheguem dentro de 420ms após a transição.
-  window._lastGoToTime = 0;
-
   function selectOption(el, gid, val) {
-    if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
-    const _dt = Date.now() - window._lastGoToTime;
-    console.log('[SELECT] selectOption gid='+gid+' val='+(val||'?')+' dt='+_dt+'ms screen='+current);
-    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     document.getElementById(gid).querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
     answers[gid] = val || el.querySelector('.opt-label').textContent;
@@ -5261,10 +5233,6 @@
   }
 
   function toggleMulti(el, gid, excl) {
-    if (typeof window._blockOptionClicks === 'function') window._blockOptionClicks(700);
-    const _dt = Date.now() - window._lastGoToTime;
-    console.log('[SELECT] toggleMulti gid='+gid+' dt='+_dt+'ms screen='+current);
-    if (_dt < 800) { console.log('[SELECT] BLOQUEADO'); return; }
     const parent = document.getElementById(gid);
     if (excl === 'none') {
       parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
@@ -10254,83 +10222,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
   document.addEventListener('click',      forcePlayAll, { once: true, passive: true });
 })();
 
-// Previne que o fim de scroll no celular real acione options acidentalmente.
-// Rastreia movimento do toque: se o dedo moveu mais de 8px em Y, cancela o onclick.
-(function() {
-  var _touchStartY = 0;
-  var _touchStartX = 0;
-  var _touchMoved  = false;
 
-  document.addEventListener('touchstart', function(e) {
-    var t = e.touches[0];
-    _touchStartY = t.clientY;
-    _touchStartX = t.clientX;
-    _touchMoved  = false;
-  }, { passive: true });
-
-  document.addEventListener('touchmove', function(e) {
-    var t = e.touches[0];
-    var dy = Math.abs(t.clientY - _touchStartY);
-    var dx = Math.abs(t.clientX - _touchStartX);
-    if (dy > 8 || dx > 8) _touchMoved = true;
-  }, { passive: true });
-
-  // Intercepta clicks que vêm após um scroll — cancela antes que cheguem às options
-  document.addEventListener('click', function(e) {
-    if (_touchMoved) {
-      e.stopPropagation();
-      e.preventDefault();
-      _touchMoved = false;
-    }
-  }, true); // capture phase — antes dos onclick inline
-})();
-
-// ── GHOST CLICK BLOCKER ──────────────────────────────────────────────────────
-// Bloqueia clicks/taps em .option durante e após transições de screen.
-// Usa capture phase no document — intercepta ANTES de qualquer onclick inline,
-// independente de pointer-events, touch-action ou estrutura do DOM.
-(function() {
-  var _blocked = false;
-  var _blockTimer = null;
-
-  // Expõe função para o goTo ativar o bloqueio
-  window._blockOptionClicks = function(ms) {
-    _blocked = true;
-    clearTimeout(_blockTimer);
-    _blockTimer = setTimeout(function() { _blocked = false; }, ms || 600);
-  };
-
-  // Captura phase: roda antes de qualquer onclick inline
-  document.addEventListener('click', function(e) {
-    if (!_blocked) return;
-    var el = e.target;
-    // Sobe na árvore até 4 níveis procurando .option
-    for (var i = 0; i < 4; i++) {
-      if (!el) break;
-      if (el.classList && el.classList.contains('option')) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        return;
-      }
-      el = el.parentElement;
-    }
-  }, true); // true = capture phase
-
-  // Também bloqueia touchend direto nas options (iOS Safari bypassa click às vezes)
-  document.addEventListener('touchend', function(e) {
-    if (!_blocked) return;
-    var el = e.target;
-    for (var i = 0; i < 4; i++) {
-      if (!el) break;
-      if (el.classList && el.classList.contains('option')) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        return;
-      }
-      el = el.parentElement;
-    }
-  }, true);
-})();
 </script>
 
 </html>
