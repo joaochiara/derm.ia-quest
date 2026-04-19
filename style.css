@@ -254,7 +254,6 @@
     flex: 1;
     display: flex; align-items: center; justify-content: center;
     padding: 96px 24px 120px;
-    min-height: 100dvh;
     overflow: visible;
     position: relative;
     z-index: 1;
