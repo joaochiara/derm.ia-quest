@@ -28,7 +28,7 @@
     font-family: var(--sans);
     background: var(--ivory);
     color: var(--ink);
-    min-height: 100lvh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
@@ -46,7 +46,7 @@
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100lvh;
+    height: 100vh;
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
@@ -255,7 +255,7 @@
     flex: 1;
     display: flex; align-items: center; justify-content: center;
     padding: 96px 24px 120px;
-    min-height: 100dvh;
+    min-height: 100vh;
     overflow: visible;
     position: relative;
     z-index: 1;
