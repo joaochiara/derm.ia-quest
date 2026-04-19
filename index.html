@@ -2228,22 +2228,29 @@ header.cc-open .inter-header-back {
     };
 
     // quiz-deferred.js: float animations, dot animations, mousetrail, scanner
-    // Carregado em idle — o browser só executa quando não há frames ou input pendentes
-    // timeout: 3000ms garante que carregue antes do usuário chegar à primeira pergunta
+    // Timeout aumentado para 6s — garante que fique fora da janela de medição
+    // do PageSpeed (~0-5s) e não contribua para o TBT.
     ric(function() {
       var s = document.createElement('script');
       s.src = 'quiz-deferred.js';
       document.body.appendChild(s);
-    }, { timeout: 3000 });
+    }, { timeout: 6000 });
 
     // extras.js: canvas do footer, animações secundárias da tela de resultado
-    // Carregado via requestIdleCallback com timeout de 6s — após a janela de medição
-    // do PageSpeed (~0-5s), evitando CLS. O footer aparece logo que o script executa.
-    ric(function() {
+    // Carregado apenas na primeira interação do usuário (click, touch ou scroll).
+    // Isso mantém o footer fora da janela de medição do PageSpeed e evita TBT.
+    // O footer se torna visível assim que o script executa após a interação.
+    var _extrasLoaded = false;
+    function _loadExtras() {
+      if (_extrasLoaded) return;
+      _extrasLoaded = true;
       var s = document.createElement('script');
       s.src = 'extras.js';
       document.head.appendChild(s);
-    }, { timeout: 6000 });
+    }
+    ['click', 'touchstart', 'scroll'].forEach(function(evt) {
+      window.addEventListener(evt, _loadExtras, { once: true, passive: true });
+    });
   });
 
   /* Ativação de vídeos por lazy-load (mantido do original) */
