@@ -15,6 +15,21 @@
 <title>dermind | Protocolo de pele</title>
 <meta name="description" content="Descubra seu protocolo de skincare ideal com inteligência artificial. Avaliação personalizada em minutos.">
 <link rel="icon" type="image/gif" href="favicon.gif">
+<style>
+  :root{--ivory:#F7F2EA;--ivory-dark:#EDE5D8;--wine:#A85568;--wine-dark:#8A3A52;--ink:#18100E;--ink-soft:#4A3A34;--ink-muted:#8A7A74;--white:#FDFAF7;--serif:'DM Serif Text',Georgia,serif;--sans:'DM Sans',sans-serif}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--ivory);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;overflow-y:auto;position:relative;touch-action:pan-y}
+  .quiz-wrap{flex:1;display:flex;flex-direction:column;position:relative;z-index:1}
+  .screen{display:none;flex-direction:column;min-height:100vh;padding:20px 20px 40px;align-items:center;justify-content:center}
+  .screen.active{display:flex}
+  .header-island{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--white);border-radius:999px}
+  .logo{font-family:var(--serif);font-size:1.2rem;color:var(--ink);text-decoration:none}
+  .progress-wrap{width:100%;height:4px;background:var(--ivory-dark);border-radius:2px;margin:12px 0}
+  .screen-h1{font-family:var(--serif);font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.2;text-align:center;margin-bottom:16px}
+  .screen-sub{font-size:1rem;color:var(--ink-soft);text-align:center;margin-bottom:24px}
+  .btn-next{background:var(--wine);color:var(--white);border:none;border-radius:999px;padding:14px 32px;font-size:1rem;cursor:pointer;width:100%;max-width:340px}
+</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
