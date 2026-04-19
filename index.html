@@ -536,8 +536,13 @@ header.cc-open .inter-header-back {
 .btn-primary-full.wide { width: 100%; justify-content: center; }
 
 /* ── INTRO ENTRANCE ANIMATIONS (#screen-0) ── */
+#screen-0 .screen-eyebrow {
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
 #screen-0 .screen-h1 {
-  opacity: 1;
+  opacity: 0;
+  transition: opacity 1.4s ease;
 }
 
 @media (min-width: 581px) {
@@ -569,6 +574,8 @@ header.cc-open .inter-header-back {
   #screen-0 .intro-steps  { margin-bottom: 27px !important; }
 }
 
+#screen-0 .screen-eyebrow.sub-visible,
+#screen-0 .screen-h1.sub-visible,
 #screen-0 .intro-sub-1.sub-visible,
 #screen-0 .intro-sub-2.sub-visible {
   opacity: 1;
