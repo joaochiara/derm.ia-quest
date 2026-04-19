@@ -22,11 +22,7 @@
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html {
-    scroll-behavior: smooth;
-    background: var(--ivory);
-    min-height: 100lvh;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
     font-family: var(--sans);
@@ -47,9 +43,12 @@
   /* ── MIST CANVAS ── */
   #mist-canvas {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: -150px;
     width: 100%;
-    height: 100lvh;
+    height: auto;
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
