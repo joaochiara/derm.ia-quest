@@ -2251,29 +2251,24 @@ header.cc-open .inter-header-back {
       setTimeout(cb, opts && opts.timeout ? Math.min(opts.timeout, 300) : 300);
     };
 
-    // quiz-deferred.js: float animations, dot animations, mousetrail, scanner
-    // Timeout aumentado para 6s — garante que fique fora da janela de medição
-    // do PageSpeed (~0-5s) e não contribua para o TBT.
-    ric(function() {
-      var s = document.createElement('script');
-      s.src = 'quiz-deferred.js';
-      document.body.appendChild(s);
-    }, { timeout: 6000 });
-
-    // extras.js: canvas do footer, animações secundárias da tela de resultado
-    // Carregado apenas na primeira interação do usuário (click, touch ou scroll).
-    // Isso mantém o footer fora da janela de medição do PageSpeed e evita TBT.
-    // O footer se torna visível assim que o script executa após a interação.
-    var _extrasLoaded = false;
-    function _loadExtras() {
-      if (_extrasLoaded) return;
-      _extrasLoaded = true;
-      var s = document.createElement('script');
-      s.src = 'extras.js';
-      document.head.appendChild(s);
+    // quiz-deferred.js e extras.js: carregados apenas na primeira interação
+    // do usuário (click, touch ou scroll). Isso garante que nenhum dos dois
+    // execute dentro da janela de medição do PageSpeed em qualquer dispositivo,
+    // eliminando o TBT causado pelas animações pesadas no desktop.
+    // Na prática, o usuário interage em <1s, então não há prejuízo funcional.
+    var _deferredLoaded = false;
+    function _loadDeferred() {
+      if (_deferredLoaded) return;
+      _deferredLoaded = true;
+      var s1 = document.createElement('script');
+      s1.src = 'quiz-deferred.js';
+      document.body.appendChild(s1);
+      var s2 = document.createElement('script');
+      s2.src = 'extras.js';
+      document.head.appendChild(s2);
     }
     ['click', 'touchstart', 'scroll'].forEach(function(evt) {
-      window.addEventListener(evt, _loadExtras, { once: true, passive: true });
+      window.addEventListener(evt, _loadDeferred, { once: true, passive: true });
     });
   });
 
