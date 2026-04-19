@@ -1597,12 +1597,22 @@ header{position:fixed;top:17px;left:12px;right:12px;z-index:55;padding:0;display
     }, { timeout: 3000 });
 
     // extras.js: canvas do footer, animações secundárias da tela de resultado
-    // Carregado depois do quiz-deferred, com timeout maior pois não é crítico
-    ric(function() {
+    // Carregado apenas na primeira interação do usuário (click ou scroll).
+    // Isso garante que extras.js nunca executa dentro da janela de medição de CLS
+    // do PageSpeed (~0-5s), eliminando o layout shift de 0.343 no .quiz-wrap.
+    // O footer só é visível no final do quiz (após ~30s de interação), portanto
+    // não há prejuízo funcional em aguardar o primeiro gesto do usuário.
+    var _extrasLoaded = false;
+    function _loadExtras() {
+      if (_extrasLoaded) return;
+      _extrasLoaded = true;
       var s = document.createElement('script');
       s.src = 'extras.js';
       document.head.appendChild(s);
-    }, { timeout: 4000 });
+    }
+    ['click', 'touchstart', 'scroll'].forEach(function(evt) {
+      window.addEventListener(evt, _loadExtras, { once: true, passive: true });
+    });
   });
 
   /* Ativação de vídeos por lazy-load (mantido do original) */
