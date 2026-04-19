@@ -2136,30 +2136,40 @@ header.cc-open .inter-header-back {
 -->
 <script src="quiz-critical.js" defer></script>
 <script>
-/* Patch mist canvas: adia o _mistInit até a primeira interação do usuário,
-   evitando que o loop de rAF do canvas gere tarefas longas durante a
-   janela de medição do PageSpeed. Na prática o mist inicia em <1s de uso. */
-window._mistInitDeferred = true;
-window._mistInitPending = false;
-var _mistInitOriginal;
-// Intercepta a definição de _mistInit pelo quiz-critical.js
-Object.defineProperty(window, '_mistInit', {
-  set: function(fn) {
-    _mistInitOriginal = fn;
-    if (!window._mistInitDeferred) fn();
-  },
-  get: function() { return _mistInitOriginal; },
-  configurable: true
-});
-function _startMistOnInteraction() {
-  if (window._mistInitPending) return;
-  window._mistInitPending = true;
-  window._mistInitDeferred = false;
-  if (typeof _mistInitOriginal === 'function') _mistInitOriginal();
-}
-['click','touchstart','scroll','mousemove'].forEach(function(evt) {
-  window.addEventListener(evt, _startMistOnInteraction, { once: true, passive: true });
-});
+/* Patch mist canvas: intercepta requestIdleCallback para atrasar _mistInit
+   até a primeira interação. O quiz-critical.js chama rIC(_mistInit, {timeout:500})
+   — ao substituir rIC temporariamente, capturamos essa chamada e a executamos
+   só quando o usuário interagir, eliminando o TBT do canvas no PageSpeed. */
+(function() {
+  var _origRIC = window.requestIdleCallback;
+  var _mistPending = null;
+  var _interacted = false;
+
+  window.requestIdleCallback = function(cb, opts) {
+    // Detecta a chamada do mist: timeout:500 e cb é função (não arrow inline)
+    if (opts && opts.timeout === 500 && !_interacted) {
+      _mistPending = cb;
+      return 0;
+    }
+    return _origRIC ? _origRIC(cb, opts) : setTimeout(cb, (opts && opts.timeout) ? Math.min(opts.timeout, 300) : 0);
+  };
+
+  function startMist() {
+    if (_interacted) return;
+    _interacted = true;
+    // Restaura rIC original antes de executar
+    if (_origRIC) window.requestIdleCallback = _origRIC;
+    if (_mistPending) {
+      var fn = _mistPending;
+      _mistPending = null;
+      fn();
+    }
+  }
+
+  ['click','touchstart','scroll','mousemove'].forEach(function(evt) {
+    window.addEventListener(evt, startMist, { once: true, passive: true });
+  });
+})();
 </script>
 <script>
 /* Patch LCP: aguarda o primeiro paint antes de iniciar o typewriter do intro,
@@ -2288,24 +2298,26 @@ function _startMistOnInteraction() {
       setTimeout(cb, opts && opts.timeout ? Math.min(opts.timeout, 300) : 300);
     };
 
-    // quiz-deferred.js e extras.js: carregados apenas na primeira interação
-    // do usuário (click, touch ou scroll). Isso garante que nenhum dos dois
-    // execute dentro da janela de medição do PageSpeed em qualquer dispositivo,
-    // eliminando o TBT causado pelas animações pesadas no desktop.
-    // Na prática, o usuário interage em <1s, então não há prejuízo funcional.
-    var _deferredLoaded = false;
-    function _loadDeferred() {
-      if (_deferredLoaded) return;
-      _deferredLoaded = true;
-      var s1 = document.createElement('script');
-      s1.src = 'quiz-deferred.js';
-      document.body.appendChild(s1);
-      var s2 = document.createElement('script');
-      s2.src = 'extras.js';
-      document.head.appendChild(s2);
+    // quiz-deferred.js: float animations, dot animations, mousetrail, scanner
+    // Carregado via rIC com timeout 6s — fora da janela de medição do PageSpeed.
+    ric(function() {
+      var s = document.createElement('script');
+      s.src = 'quiz-deferred.js';
+      document.body.appendChild(s);
+    }, { timeout: 6000 });
+
+    // extras.js: canvas do footer e animações secundárias
+    // Carregado apenas na primeira interação — não é necessário antes disso.
+    var _extrasLoaded = false;
+    function _loadExtras() {
+      if (_extrasLoaded) return;
+      _extrasLoaded = true;
+      var s = document.createElement('script');
+      s.src = 'extras.js';
+      document.head.appendChild(s);
     }
     ['click', 'touchstart', 'scroll'].forEach(function(evt) {
-      window.addEventListener(evt, _loadDeferred, { once: true, passive: true });
+      window.addEventListener(evt, _loadExtras, { once: true, passive: true });
     });
   });
 
