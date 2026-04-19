@@ -791,8 +791,8 @@ header.cc-open .inter-header-back {
   <div class="screen active" id="screen-0" data-screen="0">
     <p class="screen-eyebrow">Inteligência artificial para sua pele</p>
     <h1 class="screen-h1" id="intro-title" style="position:relative;">
-      <span id="intro-placeholder" style="visibility:hidden; display:block;">Consulte nossa IA e descubra <span class="intro-highlight">qual o <em>protocolo ideal</em></span> <span class="intro-finale">para salvar sua pele.</span></span>
-      <span id="intro-typed" style="position:absolute; top:0; left:0; width:100%;">Consulte nossa IA e descubra <span class="intro-highlight">qual o <em>protocolo ideal</em></span> <span class="intro-finale">para salvar sua pele.</span></span>
+      <span id="intro-placeholder" style="visibility:visible; display:block;">Consulte nossa IA e descubra <span class="intro-highlight">qual o <em>protocolo ideal</em></span> <span class="intro-finale">para salvar sua pele.</span></span>
+      <span id="intro-typed" style="position:absolute; top:0; left:0; width:100%; visibility:hidden;">Consulte nossa IA e descubra <span class="intro-highlight">qual o <em>protocolo ideal</em></span> <span class="intro-finale">para salvar sua pele.</span></span>
     </h1>
     <p class="screen-sub intro-sub-2" style="margin-bottom: 25px;">Conte com a tecnologia para avaliar sua pele com <strong>+95% de precisão</strong> sem sair de casa.</p>
     <div class="intro-steps" style="margin-bottom: 32px;">
@@ -2124,6 +2124,30 @@ header.cc-open .inter-header-back {
     com timeout de 3s como garantia mínima.
 -->
 <script src="quiz-critical.js" defer></script>
+<script>
+/* Patch LCP: aguarda o primeiro paint antes de iniciar o typewriter do intro,
+   garantindo que o browser registre o texto estático como LCP */
+(function() {
+  var _orig;
+  function patchIntroTypewriter() {
+    var typed = document.getElementById('intro-typed');
+    var placeholder = document.getElementById('intro-placeholder');
+    if (!typed || !placeholder) return;
+    // Só inicia a animação após o primeiro frame pintado
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        placeholder.style.visibility = 'hidden';
+        typed.style.visibility = 'visible';
+      });
+    });
+  }
+  window.addEventListener('DOMContentLoaded', function() {
+    requestAnimationFrame(function() {
+      requestAnimationFrame(patchIntroTypewriter);
+    });
+  });
+})();
+</script>
 <script>
   /* ═══ OTIMIZAÇÃO 2 — Correção de reflow forçado ═══
    * O _headerCollapse() original fazia:
