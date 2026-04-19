@@ -160,12 +160,7 @@ body {
 /* ── MIST CANVAS ── */
 #mist-canvas {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100lvh;
+  inset: 0;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
@@ -743,6 +738,85 @@ header.cc-open .inter-header-back {
 <canvas id="mist-canvas"></canvas>
 <div id="cc-panel"></div>
 <div id="cc-overlay"></div>
+
+<!-- DEBUG OVERLAY — remover depois de diagnosticar -->
+<div id="debug-overlay" style="position:fixed;top:70px;right:8px;z-index:99999;background:rgba(0,0,0,0.85);color:#0f0;font-family:monospace;font-size:10px;line-height:1.4;padding:8px;border-radius:6px;pointer-events:none;white-space:pre;text-align:right;min-width:180px;">
+loading debug...
+</div>
+<!-- Canvas outline (borda vermelha) pra ver exatamente onde o canvas está -->
+<style id="debug-style">
+#mist-canvas { outline: 3px solid red !important; outline-offset: -3px; }
+#site-footer { outline: 3px solid blue !important; outline-offset: -3px; }
+body { outline: 3px solid yellow !important; outline-offset: -3px; }
+</style>
+<script>
+(function(){
+  var el = document.getElementById('debug-overlay');
+  if (!el) return;
+
+  function measure() {
+    var canvas = document.getElementById('mist-canvas');
+    var footer = document.getElementById('site-footer');
+    var body = document.body;
+    var html = document.documentElement;
+
+    // helper: cria um div com height 100XXX e mede
+    function measureCSSUnit(unit) {
+      var d = document.createElement('div');
+      d.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100' + unit + ';visibility:hidden;pointer-events:none;';
+      document.body.appendChild(d);
+      var h = d.getBoundingClientRect().height;
+      document.body.removeChild(d);
+      return h;
+    }
+
+    var svh = measureCSSUnit('svh');
+    var lvh = measureCSSUnit('lvh');
+    var dvh = measureCSSUnit('dvh');
+    var vh = measureCSSUnit('vh');
+
+    var canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+    var footerRect = footer ? footer.getBoundingClientRect() : null;
+    var bodyRect = body.getBoundingClientRect();
+
+    var lines = [
+      'innerH: ' + window.innerHeight,
+      'innerW: ' + window.innerWidth,
+      'screenH: ' + window.screen.height,
+      'DPR: ' + window.devicePixelRatio,
+      '---',
+      '100svh: ' + Math.round(svh),
+      '100lvh: ' + Math.round(lvh),
+      '100dvh: ' + Math.round(dvh),
+      '100vh:  ' + Math.round(vh),
+      '---',
+      'canvas rect:',
+      ' top: ' + Math.round(canvasRect ? canvasRect.top : 0),
+      ' bot: ' + Math.round(canvasRect ? canvasRect.bottom : 0),
+      ' H: ' + Math.round(canvasRect ? canvasRect.height : 0),
+      ' W: ' + Math.round(canvasRect ? canvasRect.width : 0),
+      'canvas buffer:',
+      ' W x H: ' + (canvas ? canvas.width : '?') + ' x ' + (canvas ? canvas.height : '?'),
+      '---',
+      'footer rect:',
+      ' top: ' + Math.round(footerRect ? footerRect.top : 0),
+      ' bot: ' + Math.round(footerRect ? footerRect.bottom : 0),
+      ' H: ' + Math.round(footerRect ? footerRect.height : 0),
+      '---',
+      'body rect:',
+      ' H: ' + Math.round(bodyRect.height),
+      'doc H: ' + html.scrollHeight,
+      'scrollY: ' + Math.round(window.scrollY)
+    ];
+    el.textContent = lines.join('\n');
+  }
+
+  measure();
+  setInterval(measure, 500);
+  window.addEventListener('resize', measure);
+  window.addEventListener('scroll', measure, { passive: true });
+})();
+</script>
 
 <!-- Box inter1 — fora do quiz-wrap para escapar do stacking context -->
 <div class="interblock-bg-box" id="inter1-box" style="display:none;">
