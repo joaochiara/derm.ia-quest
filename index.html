@@ -1464,7 +1464,24 @@ header{position:fixed;top:17px;left:12px;right:12px;z-index:55;padding:0;display
 
 </footer>
   
-<script src="quiz.js" defer></script>
+<!-- ═══ OTIMIZAÇÃO 3 — Quebrar tarefas longas da thread principal ═══
+  quiz.js foi dividido em dois arquivos:
+
+  quiz-critical.js (~113 KB, defer):
+    Contém todas as funções de navegação (goTo, selectOption, updateProgress),
+    as IIFEs pequenas de inicialização, e a IIFE de typewriter + intro-boxes.
+    Carregado com defer — roda após o parse do HTML, sem bloquear renderização.
+
+  quiz-deferred.js (~28 KB, requestIdleCallback):
+    Contém os sub-sistemas NÃO urgentes para a tela 0:
+    - Float animations (bolinhas flutuantes das opções)
+    - Dot animations (animação dos bullets do intro)
+    - Mousetrail (efeito de brilho no cursor)
+    - Scanner IIFE (face-api, câmera, detecção facial)
+    Carregado apenas quando o browser estiver ocioso (idle),
+    com timeout de 3s como garantia mínima.
+-->
+<script src="quiz-critical.js" defer></script>
 <script>
   /* ═══ OTIMIZAÇÃO 2 — Correção de reflow forçado ═══
    * O _headerCollapse() original fazia:
@@ -1473,7 +1490,7 @@ header{position:fixed;top:17px;left:12px;right:12px;z-index:55;padding:0;display
    *   3. Escrita: o.style.height = ...
    *
    * A correção: patch aplicado via monkeypatch antes de quiz.js usar a função.
-   * Interceptamos depois que quiz.js carrega (DOMContentLoaded do defer) e
+   * Interceptamos depois que quiz-critical.js carrega (DOMContentLoaded do defer) e
    * substituímos _headerCollapse por uma versão que lê o height ANTES de
    * iniciar qualquer escrita de estilo, eliminando o reflow intermediário.
    *
@@ -1488,9 +1505,9 @@ header{position:fixed;top:17px;left:12px;right:12px;z-index:55;padding:0;display
     // O defer garante que ele roda antes deste handler em DOMContentLoaded,
     // mas usamos requestAnimationFrame para garantir que o parser finalizou.
     requestAnimationFrame(function() {
-      // Guarda referência original caso quiz.js já a tenha sobrescrito
+      // Guarda referência original caso quiz-critical.js já a tenha sobrescrito
       var _orig = window._headerCollapse;
-      if (typeof _orig !== 'function') return; // quiz.js ainda não carregou
+      if (typeof _orig !== 'function') return; // quiz-critical.js ainda não carregou
 
       window._headerCollapse = function _headerCollapsePatch() {
         var header  = document.querySelector('header');
@@ -1564,15 +1581,26 @@ header{position:fixed;top:17px;left:12px;right:12px;z-index:55;padding:0;display
    */
   window.addEventListener('load', function() {
     var ric = window.requestIdleCallback || function(cb, opts) {
-      setTimeout(cb, opts && opts.timeout ? Math.min(opts.timeout, 200) : 200);
+      // Fallback para Safari < 16 e browsers sem rIC
+      setTimeout(cb, opts && opts.timeout ? Math.min(opts.timeout, 300) : 300);
     };
 
-    // extras.js: carrega em idle (canvas de footer, animações secundárias)
+    // quiz-deferred.js: float animations, dot animations, mousetrail, scanner
+    // Carregado em idle — o browser só executa quando não há frames ou input pendentes
+    // timeout: 3000ms garante que carregue antes do usuário chegar à primeira pergunta
+    ric(function() {
+      var s = document.createElement('script');
+      s.src = 'quiz-deferred.js';
+      document.body.appendChild(s);
+    }, { timeout: 3000 });
+
+    // extras.js: canvas do footer, animações secundárias da tela de resultado
+    // Carregado depois do quiz-deferred, com timeout maior pois não é crítico
     ric(function() {
       var s = document.createElement('script');
       s.src = 'extras.js';
       document.head.appendChild(s);
-    }, { timeout: 2000 });
+    }, { timeout: 4000 });
   });
 
   /* Ativação de vídeos por lazy-load (mantido do original) */
