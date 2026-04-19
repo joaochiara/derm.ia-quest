@@ -2169,6 +2169,10 @@ header.cc-open .inter-header-back {
   ['click','touchstart','scroll','mousemove'].forEach(function(evt) {
     window.addEventListener(evt, startMist, { once: true, passive: true });
   });
+
+  // Fallback: inicia o mist após 3s mesmo sem interação,
+  // garantindo que os blobs apareçam em todos os casos.
+  setTimeout(startMist, 1500);
 })();
 </script>
 <script>
