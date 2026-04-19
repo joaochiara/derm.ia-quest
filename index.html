@@ -3,13 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <base href="/ava/">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-16B1S788P4"></script>
+<!-- Google tag (gtag.js) — carregado na primeira interação para não bloquear TBT -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-16B1S788P4');
+  var _gtagLoaded = false;
+  function _loadGtag() {
+    if (_gtagLoaded) return;
+    _gtagLoaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-16B1S788P4';
+    document.head.appendChild(s);
+  }
+  ['click', 'touchstart', 'scroll', 'mousemove'].forEach(function(evt) {
+    window.addEventListener(evt, _loadGtag, { once: true, passive: true });
+  });
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dermind | Protocolo de pele</title>
