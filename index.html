@@ -2147,7 +2147,10 @@ header.cc-open .inter-header-back {
 
   window.requestIdleCallback = function(cb, opts) {
     if (opts && opts.timeout === 500 && !_interacted) {
+      // Captura a chamada do mist e restaura rIC imediatamente
+      // para não afetar nenhuma outra chamada posterior
       _mistPending = cb;
+      if (_origRIC) window.requestIdleCallback = _origRIC;
       return 0;
     }
     return _origRIC ? _origRIC(cb, opts) : setTimeout(cb, (opts && opts.timeout) ? Math.min(opts.timeout, 300) : 0);
