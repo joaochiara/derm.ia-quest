@@ -27,14 +27,14 @@ header{position:fixed;top:17px;left:12px;right:12px;z-index:55;padding:0;display
 .progress-fill{height:100%;background:var(--wine);border-radius:2px;width:0%;transition:width .6s cubic-bezier(.4,0,.2,1)}
 /* padding-bottom fixo: extras.js aplicava 120px via JS após cada troca de tela,
    causando CLS de 0.343. Declarar aqui garante que o espaço existe desde o layout inicial. */
-.quiz-wrap{flex:1 1 0%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:1;padding:96px 24px 120px;min-height:100vh;overflow:hidden}
+.quiz-wrap{flex:1 1 0%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;z-index:1;padding:96px 24px 120px;min-height:100vh;overflow:visible}
 .screen{display:none;width:100%;max-width:620px}
 .screen.active{display:block}
 .screen-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--wine);margin-bottom:14px}
 .screen-eyebrow::before{content:"";display:block;width:16px;height:1px;background:var(--wine);opacity:.6}
-.screen-h1{font-family:var(--serif);font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.2;text-align:center;margin-bottom:16px}
-.screen-sub{font-size:1rem;color:var(--ink-soft);text-align:center;margin-bottom:24px}
-.intro-sub-2{font-size:16px;font-weight:400;line-height:1.7;color:var(--ink-soft);margin-bottom:32px;filter:drop-shadow(rgba(24,16,14,.06) 0 2px 6px)}
+.screen-h1{font-family:var(--serif);font-size:clamp(32px,5vw,50px);font-weight:700;line-height:1.08;letter-spacing:-0.025em;color:var(--ink);text-align:center;margin-bottom:14px;filter:drop-shadow(0 2px 10px rgba(168,85,104,.10)) drop-shadow(0 1px 3px rgba(24,16,14,.06))}
+.screen-sub{font-size:16px;font-weight:400;line-height:1.7;color:var(--ink-soft);text-align:center;margin-bottom:32px;filter:drop-shadow(0 2px 6px rgba(24,16,14,.06))}
+.intro-sub-2{font-size:16px;font-weight:400;line-height:1.7;color:var(--ink-soft);margin-bottom:32px;filter:drop-shadow(0 2px 6px rgba(24,16,14,.06));opacity:0;transition:opacity 1.4s ease}
 .intro-highlight{color:var(--wine)}
 .intro-steps{display:flex;flex-direction:column;gap:9px;max-width:400px;margin-inline:auto}
 .intro-step-row{display:flex;align-items:center;gap:12px}
@@ -47,11 +47,11 @@ header{position:fixed;top:17px;left:12px;right:12px;z-index:55;padding:0;display
 .opt-text{display:flex;flex-direction:column;gap:2px}
 .opt-desc{font-size:13px;font-weight:500;color:var(--ink);margin:0;line-height:1.3}
 .opt-label{font-size:11px;color:var(--ink-muted);line-height:1.2}
-.btn-primary-full{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--wine);color:var(--white);border:none;border-radius:999px;padding:15px 32px;font-family:var(--sans);font-size:1rem;font-weight:600;cursor:pointer;transition:background .22s,box-shadow .22s,transform .18s;box-shadow:rgba(168,85,104,.45) 0 4px 18px,rgba(255,255,255,.25) 0 1px 0 inset}
+.btn-primary-full{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--wine);color:var(--white);border:none;border-radius:999px;padding:17px 38px;font-family:var(--sans);font-size:1rem;font-weight:600;cursor:pointer;transition:background .22s,box-shadow .22s,transform .18s;box-shadow:rgba(168,85,104,.45) 0 4px 18px,rgba(255,255,255,.25) 0 1px 0 inset;border-radius:100px}
 .btn-primary-full.wide{width:100%;justify-content:center}
 .intro-btn{opacity:0;transform:translateY(60px);transition:opacity .52s cubic-bezier(.4,0,.2,1),transform .52s cubic-bezier(.4,0,.2,1)}
 .btn-visible{opacity:1;transform:translateY(0)}
-#screen-0 .screen-h1{opacity:1}
+#screen-0 .screen-h1{opacity:1}#intro-title{overflow:hidden}
 #screen-0 .intro-sub-2{opacity:0;transition:opacity 1.4s}
 #screen-0 .intro-sub-2.sub-visible{opacity:1}
 #screen-0 .float-box{opacity:0}
@@ -151,7 +151,7 @@ header{position:fixed;top:17px;left:12px;right:12px;z-index:55;padding:0;display
   <div class="screen active" id="screen-0" data-screen="0">
     <p class="screen-eyebrow">Inteligência artificial para sua pele</p>
     <h1 class="screen-h1" id="intro-title" style="position:relative;">
-      <span id="intro-placeholder" style="display:block; opacity:0;">Consulte nossa IA e descubra <span class="intro-highlight">qual o <em>protocolo ideal</em></span> <span class="intro-finale">para salvar sua pele.</span></span>
+      <span id="intro-placeholder" style="display:block;">Consulte nossa IA e descubra <span class="intro-highlight">qual o <em>protocolo ideal</em></span> <span class="intro-finale">para salvar sua pele.</span></span>
       <span id="intro-typed" style="position:absolute; top:0; left:0; width:100%;"></span>
     </h1>
     <p class="screen-sub intro-sub-2" style="margin-bottom: 25px;">Conte com a tecnologia para avaliar sua pele com <strong>+95% de precisão</strong> sem sair de casa.</p>
