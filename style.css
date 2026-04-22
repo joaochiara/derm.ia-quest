@@ -871,24 +871,18 @@
   }
   #screen-0 .screen-h1 {
     opacity: 1;
-    text-align: center;
-  }
-  #screen-0 .screen-sub {
-    text-align: center;
   }
 
   @media (min-width: 581px) {
     #screen-0 { max-width: 740px; }
     .sub1-desktop { display: inline; }
     .sub1-mobile  { display: none; }
-    .mobile-br { display: none; }
   }
 
   @media (max-width: 580px) {
-    #screen-0 .screen-h1 { font-size: 32px; max-width: 100%; margin-top: 5px; transform: translateY(-5px); text-align: center; }
-    #screen-0 .screen-h1 .intro-highlight { font-size: 32px; }
-    #screen-0 .screen-h1 .intro-finale { font-size: 32px; }
-    .mobile-br { display: inline; }
+    #screen-0 .screen-h1 { font-size: 40px; max-width: 100%; margin-top: 5px; transform: translateY(-5px); }
+    #screen-0 .screen-h1 .intro-highlight { font-size: 40px; }
+    #screen-0 .screen-h1 .intro-finale { font-size: 40px; }
     .sub1-desktop { display: none; }
     .sub1-mobile  { display: inline; }
   }
@@ -1523,6 +1517,22 @@
   }
   #skin-radar {
     filter: drop-shadow(0 4px 18px rgba(168,85,104,0.12));
+  }
+
+  #radar-connector-canvas,
+  #radar-connector-canvas-mobile {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  #radar-pills-overlay,
+  #radar-pills-overlay-mobile {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
   }
 
   /* Pílulas HTML sobre o radar */
@@ -2594,7 +2604,8 @@
     margin-top: 0;
     width: 100%;
     opacity: 0;
-    transition: opacity 1.4s ease;
+    transform: translateY(28px);
+    transition: opacity 1.4s ease, transform 1.4s cubic-bezier(0.22,1,0.36,1);
     overflow: hidden;
     position: relative;
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
