@@ -1224,10 +1224,7 @@
       grid-template-columns: repeat(2, 1fr);
     }
 
-    /* Carrossel de fotos — oculto em desktop (substituído pela foto frente isolada) */
-    .result-col-right .result-photos-wrap {
-      display: none !important;
-    }
+    /* Foto do scanner — visível em desktop */
 
     /* Boxes com mobile-only: ocultos em desktop */
     .result-section-mobile-only {
@@ -1302,11 +1299,7 @@
     .result-photo-front-only {
       display: block !important;
     }
-    /* Carrossel oculto no mobile (substituído pelo crachá) */
-    .result-photos-wrap,
-    #result-photos-wrap {
-      display: none !important;
-    }
+    /* Foto do scanner — visível no mobile */
     /* Boxes mobile-only visíveis */
     .result-section-mobile-only {
       display: block !important;
@@ -2611,6 +2604,8 @@
   .result-photos-wrap #result-photo-front {
     width: 60%;
     max-width: 260px;
+    aspect-ratio: 3/4;
+    min-height: 200px;
   }
   @media (max-width: 580px) {
     .result-photos-wrap {
@@ -2618,6 +2613,7 @@
     }
     .result-photos-wrap #result-photo-front {
       width: 75%;
+      min-height: 220px;
     }
     #resultSubtitle { margin-top: -5px; }
   }
