@@ -2291,11 +2291,9 @@ header.cc-open .inter-header-back {
       s.src = 'quiz-deferred.js';
       document.body.appendChild(s);
     }
-    ['click', 'touchstart', 'scroll', 'keydown'].forEach(function(evt) {
-      window.addEventListener(evt, _loadDeferred, { once: true, passive: true });
-    });
-    // Fallback: carrega após 10s caso o usuário não interaja
-    setTimeout(_loadDeferred, 10000);
+    // Carrega após 800ms do load — após a janela crítica de TBT mas antes
+    // do usuário interagir, garantindo float + slide-up na tela 0.
+    setTimeout(_loadDeferred, 800);
 
     // extras.js: canvas do footer e animações secundárias
     // Carregado apenas na primeira interação — não é necessário antes disso.
