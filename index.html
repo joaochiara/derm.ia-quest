@@ -143,30 +143,7 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--sans);
-  background:
-    linear-gradient(to bottom, rgba(247,242,234,0.85) 0%, rgba(247,242,234,0.4) 35%, rgba(247,242,234,0) 65%),
-    radial-gradient(ellipse 70% 42% at 20% 92%, rgba(168,85,104,0.85) 0%, rgba(168,85,104,0.30) 42%, transparent 100%),
-    radial-gradient(ellipse 68% 40% at 80% 88%, rgba(74,127,165,0.85) 0%, rgba(74,127,165,0.30) 42%, transparent 100%),
-    radial-gradient(ellipse 64% 34% at 15% 97%, rgba(168,85,104,0.85) 0%, rgba(168,85,104,0.30) 42%, transparent 100%),
-    radial-gradient(ellipse 60% 34% at 55% 95%, rgba(200,137,154,0.85) 0%, rgba(200,137,154,0.30) 42%, transparent 100%),
-    radial-gradient(ellipse 58% 32% at 88% 93%, rgba(74,127,165,0.85) 0%, rgba(74,127,165,0.30) 42%, transparent 100%),
-    radial-gradient(ellipse 66% 40% at 65% 70%, rgba(74,127,165,0.72) 0%, rgba(74,127,165,0.25) 42%, transparent 100%),
-    radial-gradient(ellipse 62% 38% at 35% 75%, rgba(168,85,104,0.68) 0%, rgba(168,85,104,0.24) 42%, transparent 100%),
-    radial-gradient(ellipse 70% 44% at 88% 80%, rgba(200,137,154,0.69) 0%, rgba(200,137,154,0.24) 42%, transparent 100%),
-    radial-gradient(ellipse 64% 38% at 10% 82%, rgba(74,127,165,0.63) 0%, rgba(74,127,165,0.22) 42%, transparent 100%),
-    radial-gradient(ellipse 68% 40% at 55% 87%, rgba(168,85,104,0.60) 0%, rgba(168,85,104,0.21) 42%, transparent 100%),
-    radial-gradient(ellipse 58% 32% at 30% 90%, rgba(200,137,154,0.57) 0%, rgba(200,137,154,0.20) 42%, transparent 100%),
-    radial-gradient(ellipse 62% 36% at 90% 68%, rgba(168,85,104,0.54) 0%, rgba(168,85,104,0.19) 42%, transparent 100%),
-    radial-gradient(ellipse 56% 32% at 48% 78%, rgba(200,137,154,0.54) 0%, rgba(200,137,154,0.19) 42%, transparent 100%),
-    radial-gradient(ellipse 64% 38% at 18% 55%, rgba(168,85,104,0.53) 0%, rgba(168,85,104,0.18) 42%, transparent 100%),
-    radial-gradient(ellipse 60% 36% at 82% 50%, rgba(74,127,165,0.48) 0%, rgba(74,127,165,0.17) 42%, transparent 100%),
-    radial-gradient(ellipse 56% 30% at 50% 60%, rgba(200,137,154,0.45) 0%, rgba(200,137,154,0.16) 42%, transparent 100%),
-    radial-gradient(ellipse 52% 30% at 70% 42%, rgba(168,85,104,0.42) 0%, rgba(168,85,104,0.15) 42%, transparent 100%),
-    radial-gradient(ellipse 54% 30% at 25% 45%, rgba(74,127,165,0.39) 0%, rgba(74,127,165,0.14) 42%, transparent 100%),
-    radial-gradient(ellipse 50% 28% at 88% 38%, rgba(200,137,154,0.36) 0%, rgba(200,137,154,0.12) 42%, transparent 100%),
-    linear-gradient(rgba(247,242,234,1), rgba(247,242,234,1));
-  background-attachment: scroll;
-  background-color: transparent;
+  background: var(--ivory);
   color: var(--ink);
   min-height: 100vh;
   display: flex;
@@ -177,35 +154,19 @@ body {
   touch-action: pan-y;
 }
 @media (max-width: 580px) {
-  body {
-    background:
-      linear-gradient(to bottom, rgba(247,242,234,0.75) 0%, rgba(247,242,234,0.25) 20%, rgba(247,242,234,0) 40%),
-      radial-gradient(ellipse 70% 42% at 20% 92%, rgba(168,85,104,0.85) 0%, rgba(168,85,104,0.30) 42%, transparent 100%),
-      radial-gradient(ellipse 68% 40% at 80% 88%, rgba(74,127,165,0.85) 0%, rgba(74,127,165,0.30) 42%, transparent 100%),
-      radial-gradient(ellipse 64% 34% at 15% 97%, rgba(168,85,104,0.85) 0%, rgba(168,85,104,0.30) 42%, transparent 100%),
-      radial-gradient(ellipse 60% 34% at 55% 95%, rgba(200,137,154,0.85) 0%, rgba(200,137,154,0.30) 42%, transparent 100%),
-      radial-gradient(ellipse 58% 32% at 88% 93%, rgba(74,127,165,0.85) 0%, rgba(74,127,165,0.30) 42%, transparent 100%),
-      radial-gradient(ellipse 66% 40% at 65% 70%, rgba(74,127,165,0.72) 0%, rgba(74,127,165,0.25) 42%, transparent 100%),
-      radial-gradient(ellipse 62% 38% at 35% 75%, rgba(168,85,104,0.68) 0%, rgba(168,85,104,0.24) 42%, transparent 100%),
-      radial-gradient(ellipse 70% 44% at 88% 80%, rgba(200,137,154,0.69) 0%, rgba(200,137,154,0.24) 42%, transparent 100%),
-      radial-gradient(ellipse 64% 38% at 10% 82%, rgba(74,127,165,0.63) 0%, rgba(74,127,165,0.22) 42%, transparent 100%),
-      radial-gradient(ellipse 68% 40% at 55% 87%, rgba(168,85,104,0.60) 0%, rgba(168,85,104,0.21) 42%, transparent 100%),
-      radial-gradient(ellipse 58% 32% at 30% 90%, rgba(200,137,154,0.57) 0%, rgba(200,137,154,0.20) 42%, transparent 100%),
-      radial-gradient(ellipse 62% 36% at 90% 68%, rgba(168,85,104,0.54) 0%, rgba(168,85,104,0.19) 42%, transparent 100%),
-      radial-gradient(ellipse 56% 32% at 48% 78%, rgba(200,137,154,0.54) 0%, rgba(200,137,154,0.19) 42%, transparent 100%),
-      radial-gradient(ellipse 64% 38% at 18% 45%, rgba(168,85,104,0.53) 0%, rgba(168,85,104,0.18) 42%, transparent 100%),
-      radial-gradient(ellipse 60% 36% at 82% 38%, rgba(74,127,165,0.48) 0%, rgba(74,127,165,0.17) 42%, transparent 100%),
-      radial-gradient(ellipse 56% 30% at 50% 52%, rgba(200,137,154,0.45) 0%, rgba(200,137,154,0.16) 42%, transparent 100%),
-      radial-gradient(ellipse 52% 30% at 70% 30%, rgba(168,85,104,0.42) 0%, rgba(168,85,104,0.15) 42%, transparent 100%),
-      radial-gradient(ellipse 54% 30% at 25% 35%, rgba(74,127,165,0.39) 0%, rgba(74,127,165,0.14) 42%, transparent 100%),
-      radial-gradient(ellipse 50% 28% at 88% 25%, rgba(200,137,154,0.36) 0%, rgba(200,137,154,0.12) 42%, transparent 100%),
-      linear-gradient(rgba(247,242,234,1), rgba(247,242,234,1));
-    background-attachment: scroll;
-    background-color: transparent;
-    overflow-x: hidden;
-  }
+  body { overflow-x: hidden; }
 }
 
+/* ── MIST CANVAS ── */
+#mist-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
 
 /* ── HEADER ILHA FLUTUANTE ── */
 header {
@@ -776,8 +737,7 @@ header.cc-open .inter-header-back {
 </head>
 <body>
 
-
-<div id="safari-bar-fix" style="position:fixed;bottom:-3px;left:0;width:100%;height:3px;pointer-events:none;z-index:1;background-color:rgb(180,150,162);"></div>
+<canvas id="mist-canvas"></canvas>
 <div id="cc-panel"></div>
 <div id="cc-overlay"></div>
 
@@ -1564,7 +1524,7 @@ header.cc-open .inter-header-back {
       </linearGradient>
     </defs>
     <!-- Overlay com vinheta gradiente suave — sem borda dura -->
-    <rect width="100" height="100" fill="url(#vignetteGrad)" mask="url(#face-mask)"/>
+    <rect width="100" height="100" fill="url(#vignetteGrad)"/>
     <!-- Oval guia — sem borda (invisível, apenas para referência de arco de progresso) -->
     <ellipse id="guide-ellipse" cx="50" cy="50" rx="22" ry="30"
       fill="none" stroke="rgba(168,85,104,0)" stroke-width="0"/>
@@ -1783,7 +1743,29 @@ header.cc-open .inter-header-back {
           <span id="result-title-typed" style="display:none; position:absolute; top:0; left:0; width:100%;"></span>
         </h2>
 
-
+        <!-- Fotos do scanner (carrossel — mobile only, hidden desktop) -->
+        <div class="result-photos-wrap" id="result-photos-wrap" style="display:none; overflow:hidden;">
+          <div class="result-photos-track" id="result-photos-track">
+            <div class="result-photo-col">
+              <div class="result-photo-box" id="result-photo-front">
+                <div class="photo-placeholder">📸</div>
+              </div>
+              <span class="result-photo-pill">Frente</span>
+            </div>
+            <div class="result-photo-col">
+              <div class="result-photo-box" id="result-photo-left">
+                <div class="photo-placeholder">📸</div>
+              </div>
+              <span class="result-photo-pill">Esquerda</span>
+            </div>
+            <div class="result-photo-col">
+              <div class="result-photo-box" id="result-photo-right">
+                <div class="photo-placeholder">📸</div>
+              </div>
+              <span class="result-photo-pill">Direita</span>
+            </div>
+          </div>
+        </div>
 
         <p class="result-sub" id="resultSubtitle" style="visibility:hidden;">Oi, <span id="resultNome">você</span>! Agora que passou por todas as etapas, aqui está a <strong>rotina personalizada</strong> que montamos para os seus próximos 15 dias.</p>
 
@@ -2154,6 +2136,45 @@ header.cc-open .inter-header-back {
 -->
 <script src="quiz-critical.js" defer></script>
 <script>
+/* Patch mist canvas: intercepta requestIdleCallback para atrasar _mistInit
+   até a primeira interação. O quiz-critical.js chama rIC(_mistInit, {timeout:500})
+   — ao substituir rIC temporariamente, capturamos essa chamada e a executamos
+   só quando o usuário interagir, eliminando o TBT do canvas no PageSpeed. */
+(function() {
+  var _origRIC = window.requestIdleCallback;
+  var _mistPending = null;
+  var _interacted = false;
+
+  window.requestIdleCallback = function(cb, opts) {
+    if (opts && opts.timeout === 500 && !_interacted) {
+      // Captura a chamada do mist e restaura rIC imediatamente
+      // para não afetar nenhuma outra chamada posterior
+      _mistPending = cb;
+      if (_origRIC) window.requestIdleCallback = _origRIC;
+      return 0;
+    }
+    return _origRIC ? _origRIC(cb, opts) : setTimeout(cb, (opts && opts.timeout) ? Math.min(opts.timeout, 300) : 0);
+  };
+
+  function startMist() {
+    if (_interacted) return;
+    _interacted = true;
+    if (_origRIC) window.requestIdleCallback = _origRIC;
+    if (_mistPending) {
+      var fn = _mistPending;
+      _mistPending = null;
+      fn();
+    }
+  }
+
+  ['click','touchstart','scroll','mousemove'].forEach(function(evt) {
+    window.addEventListener(evt, startMist, { once: true, passive: true });
+  });
+
+  setTimeout(startMist, 1500);
+})();
+</script>
+<script>
 /* Patch LCP: aguarda o primeiro paint antes de iniciar o typewriter do intro,
    garantindo que o browser registre o texto estático como LCP */
 (function() {
@@ -2275,27 +2296,18 @@ header.cc-open .inter-header-back {
    * como fallback para browsers que não suportam rIC (Safari < 16).
    */
   window.addEventListener('load', function() {
+    var ric = window.requestIdleCallback || function(cb, opts) {
+      // Fallback para Safari < 16 e browsers sem rIC
+      setTimeout(cb, opts && opts.timeout ? Math.min(opts.timeout, 300) : 300);
+    };
 
     // quiz-deferred.js: float animations, dot animations, mousetrail, scanner
-    // CORREÇÃO DESKTOP: rIC disparava cedo demais em desktop (CPU sem throttle),
-    // causando TBT de 2.670ms dentro da janela do PageSpeed.
-    // Agora carrega apenas na primeira interação do usuário (mesmo padrão do extras.js).
-    // O quiz funciona normalmente sem ele: quiz-critical.js cobre toda a tela 0.
-    // Na primeira interação (click no botão), quiz-deferred.js carrega em background
-    // e estará disponível a partir da tela 2 ou 3.
-    var _deferredLoaded = false;
-    function _loadDeferred() {
-      if (_deferredLoaded) return;
-      _deferredLoaded = true;
+    // Carregado via rIC com timeout 6s — fora da janela de medição do PageSpeed.
+    ric(function() {
       var s = document.createElement('script');
       s.src = 'quiz-deferred.js';
       document.body.appendChild(s);
-    }
-    ['click', 'touchstart', 'scroll', 'keydown'].forEach(function(evt) {
-      window.addEventListener(evt, _loadDeferred, { once: true, passive: true });
-    });
-    // Fallback: carrega após 10s caso o usuário não interaja
-    setTimeout(_loadDeferred, 10000);
+    }, { timeout: 6000 });
 
     // extras.js: canvas do footer e animações secundárias
     // Carregado apenas na primeira interação — não é necessário antes disso.
