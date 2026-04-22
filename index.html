@@ -2277,12 +2277,10 @@ header.cc-open .inter-header-back {
   window.addEventListener('load', function() {
 
     // quiz-deferred.js: float animations, dot animations, mousetrail, scanner
-    // CORREÇÃO DESKTOP: rIC disparava cedo demais em desktop (CPU sem throttle),
-    // causando TBT de 2.670ms dentro da janela do PageSpeed.
-    // Agora carrega apenas na primeira interação do usuário (mesmo padrão do extras.js).
-    // O quiz funciona normalmente sem ele: quiz-critical.js cobre toda a tela 0.
-    // Na primeira interação (click no botão), quiz-deferred.js carrega em background
-    // e estará disponível a partir da tela 2 ou 3.
+    // Carregado via DOMContentLoaded para chegar antes do _introBoxStart (critical.js
+    // agenda os boxes para t+500ms). Deferred precisa estar pronto antes disso
+    // para assumir o slide-up e float. O download (~120ms) começa no DOMContentLoaded
+    // e termina bem antes do _introBoxStart disparar.
     var _deferredLoaded = false;
     function _loadDeferred() {
       if (_deferredLoaded) return;
@@ -2291,9 +2289,9 @@ header.cc-open .inter-header-back {
       s.src = 'quiz-deferred.js';
       document.body.appendChild(s);
     }
-    // Carrega após 800ms do load — após a janela crítica de TBT mas antes
-    // do usuário interagir, garantindo float + slide-up na tela 0.
-    setTimeout(_loadDeferred, 800);
+    // Carrega imediatamente no load (que neste site é quase simultâneo ao DCL)
+    // para garantir que deferred executa antes do _introBoxStart (~500ms após DCL).
+    _loadDeferred();
 
     // extras.js: canvas do footer e animações secundárias
     // Carregado apenas na primeira interação — não é necessário antes disso.
