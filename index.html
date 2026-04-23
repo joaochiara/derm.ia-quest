@@ -1998,28 +1998,20 @@ header.cc-open .inter-header-back {
       overflow: visible;
       z-index: 2;
       transition: none;
-      /* Força GPU compositing layer próprio desde o primeiro paint.
-         Sem isso, o backdrop-filter da .footer-wa-pill cria um layer
-         independente que o Safari iOS "iça" acima do chrome nativo
-         (retângulo marfim da safe area). translateZ(0) é um transform
-         real — diferente do will-change que é apenas uma dica — e
-         obriga o WebKit a criar o layer imediatamente, contendo o layer
-         da pílula dentro do layer do footer, abaixo do chrome. */
-      transform: translateZ(0);
     }
     #site-footer.footer-ready {
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
     }
     #site-footer.footer-hiding {
-      transform: translateY(60px) translateZ(0);
+      transform: translateY(60px);
       opacity: 0;
     }
     #site-footer.footer-entering {
       animation: footerEnter 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
     @keyframes footerEnter {
-      from { transform: translateY(60px) translateZ(0); opacity: 0; }
-      to   { transform: translateZ(0);                  opacity: 1; }
+      from { transform: translateY(60px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
     }
 
     /* Cobre o canvas fixo além do footer */
@@ -2100,9 +2092,15 @@ header.cc-open .inter-header-back {
       font-weight: 500;
       letter-spacing: 0.06em;
       color: var(--ink-soft, #5c4a3a);
-      background: rgba(253,250,247,0.70);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      /* Opacidade aumentada de 0.70 → 0.88: compensa a ausência do
+         backdrop-filter. O #footer-blur-layer já aplica blur(16px) a
+         toda a área do footer (incluindo a orelha onde a pílula fica),
+         portanto o efeito "vidro fosco" é preservado pelo layer abaixo.
+         O backdrop-filter foi removido da pílula porque cria um GPU
+         compositing layer que o iOS Safari promove acima do chrome
+         nativo (retângulo marfim da safe area) na screen 0 do primeiro
+         carregamento — bug não corrigível via will-change ou translateZ. */
+      background: rgba(253,250,247,0.88);
       border: 1px solid rgba(255,255,255,0.60);
       padding: 6px 14px;
       border-radius: 100px;
