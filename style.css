@@ -830,6 +830,7 @@
     #screen-0 { max-width: 740px; }
     .sub1-desktop { display: inline; }
     .sub1-mobile  { display: none; }
+    .screen-sub { font-size: 16px; }
   }
 
   @media (max-width: 580px) {
@@ -1539,7 +1540,7 @@
     filter: drop-shadow(0 2px 6px rgba(24,16,14,0.06));
   }
   @media (min-width: 581px) {
-    .result-sub { margin-top: -10px; }
+    .result-sub { margin-top: -10px; font-size: 16px; }
   }
   .result-sub strong { font-weight: 900; }
 
