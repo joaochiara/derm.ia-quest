@@ -142,9 +142,11 @@
 html { scroll-behavior: smooth; }
 
 #bg-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
+  display: none;
+}
+
+body {
+  font-family: var(--sans);
   background:
     linear-gradient(to bottom, rgba(247,242,234,0.85) 0%, rgba(247,242,234,0.4) 35%, rgba(247,242,234,0) 65%),
     radial-gradient(ellipse 70% 42% at 20% 92%, rgba(168,85,104,0.85) 0%, rgba(168,85,104,0.30) 42%, transparent 100%),
@@ -168,13 +170,7 @@ html { scroll-behavior: smooth; }
     radial-gradient(ellipse 50% 28% at 88% 38%, rgba(200,137,154,0.36) 0%, rgba(200,137,154,0.12) 42%, transparent 100%),
     linear-gradient(rgba(247,242,234,1), rgba(247,242,234,1));
   background-attachment: scroll;
-  pointer-events: none;
-  will-change: transform;
-}
-
-body {
-  font-family: var(--sans);
-  background: transparent;
+  background-color: transparent;
   color: var(--ink);
   min-height: 100vh;
   display: flex;
@@ -186,10 +182,6 @@ body {
 }
 @media (max-width: 580px) {
   body {
-    background: transparent;
-    overflow-x: hidden;
-  }
-  #bg-layer {
     background:
       linear-gradient(to bottom, rgba(247,242,234,0.75) 0%, rgba(247,242,234,0.25) 20%, rgba(247,242,234,0) 40%),
       radial-gradient(ellipse 70% 42% at 20% 92%, rgba(168,85,104,0.85) 0%, rgba(168,85,104,0.30) 42%, transparent 100%),
@@ -213,8 +205,9 @@ body {
       radial-gradient(ellipse 50% 28% at 88% 25%, rgba(200,137,154,0.36) 0%, rgba(200,137,154,0.12) 42%, transparent 100%),
       linear-gradient(rgba(247,242,234,1), rgba(247,242,234,1));
     background-attachment: scroll;
+    background-color: transparent;
+    overflow-x: hidden;
   }
-
 }
 
 
@@ -781,7 +774,7 @@ header.cc-open .inter-header-back {
 
   /* Move botão para cima em mobile */
   #screen-0 #intro-btn {
-    transform: translateY(2px);
+    transform: translateY(22px);
   }
 }
 
