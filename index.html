@@ -1998,6 +1998,7 @@ header.cc-open .inter-header-back {
       overflow: visible;
       z-index: 2;
       transition: none;
+      will-change: transform; /* pre-cria compositing layer → evita que backdrop-filter da pílula flutue acima do chrome do Safari na screen 0 inicial */
     }
     #site-footer.footer-ready {
       transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
