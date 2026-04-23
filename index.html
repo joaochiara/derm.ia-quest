@@ -141,10 +141,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
-#bg-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
+body {
+  font-family: var(--sans);
   background:
     linear-gradient(to bottom, rgba(247,242,234,0.85) 0%, rgba(247,242,234,0.4) 35%, rgba(247,242,234,0) 65%),
     radial-gradient(ellipse 70% 42% at 20% 92%, rgba(168,85,104,0.85) 0%, rgba(168,85,104,0.30) 42%, transparent 100%),
@@ -168,13 +166,7 @@ html { scroll-behavior: smooth; }
     radial-gradient(ellipse 50% 28% at 88% 38%, rgba(200,137,154,0.36) 0%, rgba(200,137,154,0.12) 42%, transparent 100%),
     linear-gradient(rgba(247,242,234,1), rgba(247,242,234,1));
   background-attachment: scroll;
-  pointer-events: none;
-  will-change: transform;
-}
-
-body {
-  font-family: var(--sans);
-  background: transparent;
+  background-color: transparent;
   color: var(--ink);
   min-height: 100vh;
   display: flex;
@@ -186,10 +178,6 @@ body {
 }
 @media (max-width: 580px) {
   body {
-    background: transparent;
-    overflow-x: hidden;
-  }
-  #bg-layer {
     background:
       linear-gradient(to bottom, rgba(247,242,234,0.75) 0%, rgba(247,242,234,0.25) 20%, rgba(247,242,234,0) 40%),
       radial-gradient(ellipse 70% 42% at 20% 92%, rgba(168,85,104,0.85) 0%, rgba(168,85,104,0.30) 42%, transparent 100%),
@@ -213,8 +201,9 @@ body {
       radial-gradient(ellipse 50% 28% at 88% 25%, rgba(200,137,154,0.36) 0%, rgba(200,137,154,0.12) 42%, transparent 100%),
       linear-gradient(rgba(247,242,234,1), rgba(247,242,234,1));
     background-attachment: scroll;
+    background-color: transparent;
+    overflow-x: hidden;
   }
-
 }
 
 
@@ -786,7 +775,6 @@ header.cc-open .inter-header-back {
 <noscript><link rel="stylesheet" href="style.css"></noscript>
 </head>
 <body>
-<div id="bg-layer" aria-hidden="true"></div>
 
 
 <div id="safari-bar-fix" style="position:fixed;bottom:-3px;left:0;width:100%;height:3px;pointer-events:none;z-index:1;background-color:rgb(180,150,162);"></div>
@@ -2289,10 +2277,12 @@ header.cc-open .inter-header-back {
   window.addEventListener('load', function() {
 
     // quiz-deferred.js: float animations, dot animations, mousetrail, scanner
-    // Carregado via DOMContentLoaded para chegar antes do _introBoxStart (critical.js
-    // agenda os boxes para t+500ms). Deferred precisa estar pronto antes disso
-    // para assumir o slide-up e float. O download (~120ms) começa no DOMContentLoaded
-    // e termina bem antes do _introBoxStart disparar.
+    // CORREÇÃO DESKTOP: rIC disparava cedo demais em desktop (CPU sem throttle),
+    // causando TBT de 2.670ms dentro da janela do PageSpeed.
+    // Agora carrega apenas na primeira interação do usuário (mesmo padrão do extras.js).
+    // O quiz funciona normalmente sem ele: quiz-critical.js cobre toda a tela 0.
+    // Na primeira interação (click no botão), quiz-deferred.js carrega em background
+    // e estará disponível a partir da tela 2 ou 3.
     var _deferredLoaded = false;
     function _loadDeferred() {
       if (_deferredLoaded) return;
@@ -2301,9 +2291,11 @@ header.cc-open .inter-header-back {
       s.src = 'quiz-deferred.js';
       document.body.appendChild(s);
     }
-    // Carrega imediatamente no load (que neste site é quase simultâneo ao DCL)
-    // para garantir que deferred executa antes do _introBoxStart (~500ms após DCL).
-    _loadDeferred();
+    ['click', 'touchstart', 'scroll', 'keydown'].forEach(function(evt) {
+      window.addEventListener(evt, _loadDeferred, { once: true, passive: true });
+    });
+    // Fallback: carrega após 10s caso o usuário não interaja
+    setTimeout(_loadDeferred, 10000);
 
     // extras.js: canvas do footer e animações secundárias
     // Carregado apenas na primeira interação — não é necessário antes disso.
