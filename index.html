@@ -611,11 +611,6 @@ header.cc-open .inter-header-back {
   visibility: hidden;
 }
 
-.br-mobile { display: none; }
-@media (max-width: 580px) {
-  .br-mobile { display: inline; }
-}
-
 @media (min-width: 581px) {
   #screen-0 .screen-h1,
   #screen-0 .screen-sub { max-width: 730px; margin-inline: auto; }
@@ -799,7 +794,34 @@ header.cc-open .inter-header-back {
     if (done) return;
     done = true;
     var el = document.getElementById('intro-title');
-    if (el) el.style.visibility = 'visible';
+    if (!el) return;
+    // Injeta quebras de linha no momento do reveal (sem glitch possível)
+    var ph = document.getElementById('intro-placeholder');
+    if (ph) {
+      var isMobile = window.innerWidth <= 580;
+      var highlight = ph.querySelector('.intro-highlight');
+      var textNode = ph.firstChild;
+      if (highlight && textNode && textNode.nodeType === 3) {
+        if (isMobile) {
+          textNode.nodeValue = 'Você até cuida da pele.';
+          var br1 = document.createElement('br');
+          var t2  = document.createTextNode(' Mas será que usa os');
+          var br2 = document.createElement('br');
+          var t3  = document.createTextNode(' ');
+          ph.insertBefore(t3,  highlight);
+          ph.insertBefore(br2, t3);
+          ph.insertBefore(t2,  br2);
+          ph.insertBefore(br1, t2);
+        } else {
+          textNode.nodeValue = 'Você até cuida da pele. Mas será';
+          var br  = document.createElement('br');
+          var t   = document.createTextNode(' que usa os ');
+          ph.insertBefore(t,  highlight);
+          ph.insertBefore(br, t);
+        }
+      }
+    }
+    el.style.visibility = 'visible';
   }
   function whenDOMReady(fn) {
     if (document.readyState === 'loading') {
