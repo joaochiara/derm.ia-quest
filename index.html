@@ -789,6 +789,22 @@ header.cc-open .inter-header-back {
 }
 
 </style>
+<script>
+/* Garante que o h1 da tela 0 só aparece quando ambas as fontes
+   DM Serif Text (regular + itálico) estiverem carregadas,
+   evitando o flash do itálico aparecendo antes do regular. */
+(function() {
+  var h1 = document.getElementById('intro-title');
+  if (!h1 || !document.fonts) return;
+  h1.style.visibility = 'hidden';
+  Promise.all([
+    document.fonts.load('400 1em "DM Serif Text"'),
+    document.fonts.load('italic 400 1em "DM Serif Text"')
+  ]).then(function() {
+    h1.style.visibility = '';
+  });
+})();
+</script>
 <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="style.css"></noscript>
 </head>
