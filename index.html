@@ -794,22 +794,27 @@ header.cc-open .inter-header-back {
 </style>
 <script>
 (function() {
+  var done = false;
   function reveal() {
+    if (done) return;
+    done = true;
     var el = document.getElementById('intro-title');
-    if (el) el.style.visibility = '';
+    if (el) el.style.visibility = 'visible';
   }
-  function whenReady(fn) {
+  function whenDOMReady(fn) {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', fn);
     } else {
       fn();
     }
   }
-  if (!document.fonts) { whenReady(reveal); return; }
-  Promise.all([
-    document.fonts.load('400 1em "DM Serif Text"'),
-    document.fonts.load('italic 400 1em "DM Serif Text"')
-  ]).then(function() { whenReady(reveal); });
+  // Fallback: garante exibição mesmo se a Font API falhar
+  setTimeout(function() { whenDOMReady(reveal); }, 2000);
+  if (!document.fonts) { whenDOMReady(reveal); return; }
+  // document.fonts.ready espera TODAS as fontes do documento
+  document.fonts.ready
+    .then(function() { whenDOMReady(reveal); })
+    .catch(function() { whenDOMReady(reveal); });
 })();
 </script>
 <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
