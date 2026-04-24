@@ -607,6 +607,9 @@ header.cc-open .inter-header-back {
 #screen-0 .screen-h1 {
   opacity: 1;
 }
+#intro-title {
+  visibility: hidden;
+}
 
 .br-mobile { display: none; }
 @media (max-width: 580px) {
@@ -790,18 +793,18 @@ header.cc-open .inter-header-back {
 
 </style>
 <script>
-/* Garante que o h1 da tela 0 só aparece quando ambas as fontes
-   DM Serif Text (regular + itálico) estiverem carregadas,
-   evitando o flash do itálico aparecendo antes do regular. */
+/* Mostra o h1 da tela 0 só quando ambas as fontes DM Serif
+   (regular + itálico) estiverem carregadas simultaneamente. */
 (function() {
-  var h1 = document.getElementById('intro-title');
-  if (!h1 || !document.fonts) return;
-  h1.style.visibility = 'hidden';
+  if (!document.fonts) {
+    document.getElementById('intro-title').style.visibility = '';
+    return;
+  }
   Promise.all([
     document.fonts.load('400 1em "DM Serif Text"'),
     document.fonts.load('italic 400 1em "DM Serif Text"')
   ]).then(function() {
-    h1.style.visibility = '';
+    document.getElementById('intro-title').style.visibility = '';
   });
 })();
 </script>
