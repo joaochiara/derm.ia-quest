@@ -784,23 +784,6 @@ header.cc-open .inter-header-back {
 }
 
 </style>
-<script>
-/* Injeta quebras de linha do intro via JS para evitar glitch de FOUT.
-   Mobile (<=580px): quebra após "pele." e após "os"
-   Desktop (>580px): quebra após "será" */
-document.addEventListener('DOMContentLoaded', function() {
-  var el = document.getElementById('intro-placeholder');
-  if (!el) return;
-  var isMobile = window.innerWidth <= 580;
-  if (isMobile) {
-    el.innerHTML = el.innerHTML
-      .replace('Você até cuida da pele. Mas será que usa os', 'Você até cuida da pele.<br> Mas será que usa os<br>');
-  } else {
-    el.innerHTML = el.innerHTML
-      .replace('Você até cuida da pele. Mas será que usa os', 'Você até cuida da pele. Mas será<br> que usa os');
-  }
-});
-</script>
 <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="style.css"></noscript>
 </head>
@@ -874,6 +857,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <p class="screen-eyebrow">Inteligência artificial para sua pele</p>
     <h1 class="screen-h1" id="intro-title" style="position:relative;">
       <span id="intro-placeholder" style="visibility:visible; display:block;">Você até cuida da pele. Mas será que usa os <span class="intro-highlight"><em>produtos ideais</em> para ela?</span>
+      <script>(function(){var e=document.getElementById('intro-placeholder');if(!e)return;if(window.innerWidth<=580){e.innerHTML=e.innerHTML.replace('Você até cuida da pele. Mas será que usa os ','Você até cuida da pele.<br> Mas será que usa os<br> ');}else{e.innerHTML=e.innerHTML.replace('Você até cuida da pele. Mas será que usa os ','Você até cuida da pele. Mas será<br> que usa os ');}}());</script>
     </h1>
     <p class="screen-sub intro-sub-1" style="margin-bottom: 25px;">Descubra em 6 minutos qual protocolo realmente funciona para sua pele - com mais de 96% de precisão, sem consulta, sem espera e sem achismos.</p>
     <div class="intro-steps" style="margin-bottom: 32px;">
