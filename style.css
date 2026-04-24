@@ -357,14 +357,6 @@
   }
   .screen-h1 em { font-style: italic; color: var(--wine); }
 
-  /* ── QUEBRAS DE LINHA CONDICIONAIS (tela 0) ── */
-  .br-mobile  { display: none; }
-  .br-desktop { display: inline; }
-  @media (max-width: 580px) {
-    .br-mobile  { display: inline; }
-    .br-desktop { display: none; }
-  }
-
   .screen-q {
     font-family: var(--serif);
     font-size: clamp(22px, 3.5vw, 34px);
