@@ -1,0 +1,22 @@
+{
+  "name": "Dermind | Protocolo de pele",
+  "short_name": "Dermind",
+  "icons": [
+    {
+      "src": "/ava/favicon/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/ava/favicon/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#F7F2EA",
+  "background_color": "#F7F2EA",
+  "display": "standalone",
+  "start_url": "/ava"
+}
