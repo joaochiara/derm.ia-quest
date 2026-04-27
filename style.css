@@ -1231,6 +1231,11 @@
     .result-col-right #box-protocolo-completo   { order: 8; }
     .result-col-right #result-cta-box           { order: 9; }
     .result-col-right #box-dicas-inteligentes-mobile { order: 10; }
+
+    /* Desktop: empurra o box "Protocolo completo" 10px para baixo */
+    .result-col-right #box-protocolo-completo {
+      margin-top: 10px;
+    }
   }
 
   /* Mobile: layout da screen resultado */
